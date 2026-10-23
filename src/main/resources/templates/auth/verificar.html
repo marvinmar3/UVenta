@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Verificar correo')}">
+    <meta charset="UTF-8">
+    <title>Verificar correo - UVenta</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <link href="../../static/css/uventa.css" rel="stylesheet">
+</head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container auth-wrap">
+  <div class="card shadow-sm w-100" style="max-width: 440px;">
+    <div class="card-body p-4">
+      <h1 class="h3 fw-bold">Revisa tu correo</h1>
+      <p class="text-secondary">Escribe el código de 6 dígitos que te enviamos. Vence en 15 minutos.</p>
+
+      <div class="alert alert-info" th:if="${info != null}" th:text="${info}"></div>
+      <div class="alert alert-danger" th:if="${error != null and !#strings.isEmpty(error)}" th:text="${error}"></div>
+
+      <form th:action="@{/verificar}" method="post">
+        <label for="correo" class="form-label fw-semibold">Correo institucional</label>
+        <input id="correo" name="correo" type="email" class="form-control" required th:value="${correo}">
+        <label for="codigo" class="form-label fw-semibold mt-3">Código</label>
+        <input id="codigo" name="codigo" class="form-control form-control-lg text-center" required
+               inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000">
+        <button type="submit" class="btn btn-primary w-100 mt-4">Verificar y continuar</button>
+      </form>
+
+      <form th:action="@{/reenviar}" method="post" class="text-center mt-3" th:if="${correo != null}">
+        <input type="hidden" name="correo" th:value="${correo}">
+        <button type="submit" class="btn btn-link">Enviarme un código nuevo</button>
+      </form>
+    </div>
+  </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

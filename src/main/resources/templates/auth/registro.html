@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Crear cuenta')}">
+    <meta charset="UTF-8">
+    <title>Crear cuenta - UVenta</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <link href="../../static/css/uventa.css" rel="stylesheet">
+</head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container py-4" style="max-width: 560px;">
+  <div class="card shadow-sm">
+    <div class="card-body p-4">
+      <h1 class="h3 fw-bold">Crea tu cuenta</h1>
+      <p class="text-secondary">Usa tu correo institucional. Te enviaremos un código para confirmarlo.</p>
+
+      <form th:action="@{/registro}" th:object="${form}" method="post" novalidate>
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <label for="nombre" class="form-label fw-semibold">Nombre</label>
+            <input id="nombre" class="form-control" th:field="*{nombre}" th:errorclass="is-invalid" autocomplete="given-name">
+            <div class="invalid-feedback" th:errors="*{nombre}"></div>
+          </div>
+          <div class="col-sm-6">
+            <label for="apellidos" class="form-label fw-semibold">Apellidos</label>
+            <input id="apellidos" class="form-control" th:field="*{apellidos}" th:errorclass="is-invalid" autocomplete="family-name">
+            <div class="invalid-feedback" th:errors="*{apellidos}"></div>
+          </div>
+          <div class="col-12">
+            <label for="correo" class="form-label fw-semibold">Correo institucional</label>
+            <input id="correo" type="email" class="form-control" th:field="*{correo}" th:errorclass="is-invalid"
+                   placeholder="@uv.mx o @estudiantes.uv.mx" autocomplete="email">
+            <div class="invalid-feedback" th:errors="*{correo}"></div>
+          </div>
+          <div class="col-sm-6">
+            <label for="tipoUsuario" class="form-label fw-semibold">Soy</label>
+            <select id="tipoUsuario" class="form-select" th:field="*{tipoUsuario}">
+              <option value="ESTUDIANTE">Estudiante</option>
+              <option value="EGRESADO">Egresado(a)</option>
+            </select>
+          </div>
+          <div class="col-sm-6" id="bloque-matricula">
+            <label for="matricula" class="form-label fw-semibold">Matrícula</label>
+            <input id="matricula" class="form-control" th:field="*{matricula}" th:errorclass="is-invalid" placeholder="zS21012345">
+            <div class="invalid-feedback" th:errors="*{matricula}"></div>
+          </div>
+          <div class="col-sm-6" id="bloque-egreso">
+            <label for="anioEgreso" class="form-label fw-semibold">Año de egreso</label>
+            <input id="anioEgreso" type="number" class="form-control" th:field="*{anioEgreso}" th:errorclass="is-invalid" placeholder="2025">
+            <div class="invalid-feedback" th:errors="*{anioEgreso}"></div>
+          </div>
+          <div class="col-12">
+            <label for="idCarrera" class="form-label fw-semibold">Carrera</label>
+            <select id="idCarrera" class="form-select" th:field="*{idCarrera}" th:errorclass="is-invalid">
+              <option value="">Elige tu carrera</option>
+              <option th:each="c : ${carreras}" th:value="${c.id}" th:text="${c.nombre}"></option>
+            </select>
+            <div class="invalid-feedback" th:errors="*{idCarrera}"></div>
+          </div>
+          <div class="col-sm-6">
+            <label for="password" class="form-label fw-semibold">Contraseña</label>
+            <input id="password" type="password" class="form-control" th:field="*{password}" th:errorclass="is-invalid" autocomplete="new-password">
+            <div class="invalid-feedback" th:errors="*{password}"></div>
+            <div class="form-text">Mínimo 8 caracteres.</div>
+          </div>
+          <div class="col-sm-6">
+            <label for="confirmarPassword" class="form-label fw-semibold">Repite la contraseña</label>
+            <input id="confirmarPassword" type="password" class="form-control" th:field="*{confirmarPassword}" th:errorclass="is-invalid" autocomplete="new-password">
+            <div class="invalid-feedback" th:errors="*{confirmarPassword}"></div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 mt-4">Crear cuenta y enviar código</button>
+      </form>
+      <p class="text-center mt-3 mb-0">¿Ya tienes cuenta? <a th:href="@{/login}" class="fw-bold">Entra aquí</a></p>
+    </div>
+  </div>
+</main>
+<script>
+  // Muestra matrícula (estudiante) o año de egreso (egresado)
+  const tipo = document.getElementById('tipoUsuario');
+  function ajustar() {
+    const est = tipo.value === 'ESTUDIANTE';
+    document.getElementById('bloque-matricula').hidden = !est;
+    document.getElementById('bloque-egreso').hidden = est;
+  }
+  tipo.addEventListener('change', ajustar);
+  ajustar();
+</script>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

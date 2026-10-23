@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Iniciar sesión')}">
+    <meta charset="UTF-8">
+    <title>Iniciar sesión - UVenta</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <link href="../../static/css/uventa.css" rel="stylesheet">
+</head>
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container auth-wrap">
+    <div class="card shadow-sm w-100" style="max-width: 440px">
+        <div class="card-body p-4">
+            <h1 class = "h3 fw-bold">Entra a Uventa</h1>
+            <p class="text-secondary">Compra, vende y dona entre compañeros de tu facultad.</p>
+
+            <div class="alert alert-success" th:if="${param.verificado}">
+                ¡Correo verificado! Ya puedes iniciar sesión.
+            </div>
+            <div class="alert alert-info" th:if="${param.logout}">
+                Cerraste sesión. ¡Hasta pronto!
+            </div>
+            <div class="alert alert-danger" th:if="${param.error}">
+                Correo o contraseña incorrectos.
+            </div>
+            <div class = "alert alert-warning" th:if="${param.pendiente}">
+                Aún no verificas tu correo. <a th:href="@{/verificar}">
+                    Verificar ahora
+                </a>
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <label for="correo" class="form-label fw-semibold mt-2">Correo institucional</label>
+                <input id="correo" name="correo" type="email" class="form-control" required autofocus autocomplete="username" placeholder="tu.matricula@estudiantes.uv.mx">
+                <label for="password" class="form-label fw-semibold mt-3">Contraseña</label>
+                <input id="password" name="password" type="password" class="form-control" required autocomplete="current-password">
+                <button type="submit" class="btn btn-primary w-100 mt-4">Entrar</button>
+            </form>
+
+            <div class="nota-confianza mt-4">
+                Solo entan personas pertenecientes a la Universidad Veracruzana (<b>@uv.mx</b>, <b>estudiantes.uv.mx</b>, <b>@egresados.uv.mx</b>)
+            </div>
+            <p class="text-center mt-3 mb-0">¿Primera vez? <a th:href="@{/registro}" class="fw-bold">Crea tu cuenta</a><br>
+            <a th:href="@{/verificar}" class="small">Verificar correo</a>
+            </p>
+        </div>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

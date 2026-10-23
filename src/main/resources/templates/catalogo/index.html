@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Explorar')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container py-4">
+  <div class="p-4 rounded-4" style="background:#E0F3EA;">
+    <h1 class="h3 fw-bold mb-1" th:text="'¡Hola, ' + ${nombreUsuario} + '! 👋'">¡Hola!</h1>
+    <p class="mb-0">Tu cuenta está verificada. Aquí aparecerá el catálogo de UVenta (siguiente módulo).</p>
+  </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,41 @@
+/* Colores de marca UVenta sobre Bootstrap 5.3
+   Verde = sustentabilidad y acción principal | Naranja = destacados y donaciones
+   Azul marino = confianza y texto | Crema = calidez */
+:root {
+  --uv-green: #23805A;
+  --uv-green-dark: #1B6B4B;
+  --uv-orange: #F2803F;
+  --uv-navy: #12335B;
+  --uv-cream: #FDF5E6;
+  --uv-line: #EADFC9;
+
+  --bs-body-bg: var(--uv-cream);
+  --bs-body-color: var(--uv-navy);
+  --bs-body-font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --bs-primary: var(--uv-green);
+  --bs-primary-rgb: 35, 128, 90;
+  --bs-link-color: var(--uv-green);
+  --bs-link-hover-color: var(--uv-green-dark);
+  --bs-border-radius: .9rem;
+  --bs-border-radius-lg: 1.25rem;
+}
+
+.btn { font-weight: 700; min-height: 46px; }
+.btn-primary {
+  --bs-btn-bg: var(--uv-green); --bs-btn-border-color: var(--uv-green);
+  --bs-btn-hover-bg: var(--uv-green-dark); --bs-btn-hover-border-color: var(--uv-green-dark);
+  --bs-btn-active-bg: var(--uv-green-dark); --bs-btn-active-border-color: var(--uv-green-dark);
+  --bs-btn-disabled-bg: var(--uv-green); --bs-btn-disabled-border-color: var(--uv-green);
+}
+.btn-accent {
+  --bs-btn-color: #1b1208; --bs-btn-bg: var(--uv-orange); --bs-btn-border-color: var(--uv-orange);
+  --bs-btn-hover-color: #1b1208; --bs-btn-hover-bg: #e06f2f; --bs-btn-hover-border-color: #e06f2f;
+}
+.card { border: 2px solid var(--uv-line); }
+.form-control, .form-select { border-width: 2px; border-color: var(--uv-line); padding: .75rem .9rem; }
+.form-control:focus, .form-select:focus {
+  border-color: var(--uv-green); box-shadow: 0 0 0 .25rem rgba(35, 128, 90, .2);
+}
+.navbar { background: #fff; border-bottom: 2px solid var(--uv-line); }
+.nota-confianza { background: #E0F3EA; border-radius: var(--bs-border-radius); padding: .75rem 1rem; font-size: .9rem; }
+.auth-wrap { min-height: calc(100vh - 70px); display: grid; place-items: center; padding: 1.5rem 0; }
