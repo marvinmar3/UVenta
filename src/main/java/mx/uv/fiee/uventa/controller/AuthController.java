@@ -1,6 +1,8 @@
 package mx.uv.fiee.uventa.controller;
 
-
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import mx.uv.fiee.uventa.dto.RegistroForm;
 import mx.uv.fiee.uventa.model.Usuario;
 import mx.uv.fiee.uventa.repository.CarreraRepository;
@@ -8,9 +10,6 @@ import mx.uv.fiee.uventa.service.RegistroException;
 import mx.uv.fiee.uventa.service.UsuarioService;
 import mx.uv.fiee.uventa.service.VerificacionService;
 import mx.uv.fiee.uventa.service.VerificacionService.Resultado;
-import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,9 +17,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequiredArgsConstructor 
+@RequiredArgsConstructor
 public class AuthController {
-    private static final String SESION_CORREO = "correo_pendiente";
+
+    private static final String SESION_CORREO = "correoPendiente";
 
     private final UsuarioService usuarios;
     private final VerificacionService verificacion;
@@ -31,10 +31,10 @@ public class AuthController {
         return "auth/login";
     }
 
-    @GetMapping ("/registro")
-    public String registroForm(Model model){
+    @GetMapping("/registro")
+    public String registro(Model model) {
         model.addAttribute("form", new RegistroForm());
-        model.addAttribute("carreras", carreras.findByActivaTrueOrderByNombreAsc());
+        cargarListas(model);
         return "auth/registro";
     }
 
@@ -53,8 +53,13 @@ public class AuthController {
                 br.rejectValue(e.getCampo(), "registro", e.getMessage());
             }
         }
-        model.addAttribute("carreras", carreras.findByActivaTrueOrderByNombreAsc());
+        cargarListas(model);
         return "auth/registro";
+    }
+
+    private void cargarListas(Model model) {
+        model.addAttribute("carreras", carreras.findByActivaTrueOrderByNombreAsc());
+        model.addAttribute("anios", usuarios.aniosEgreso());
     }
 
     @GetMapping("/verificar")
@@ -89,5 +94,4 @@ public class AuthController {
                 "Si ese correo está pendiente de verificar, te enviamos un código nuevo.");
         return "redirect:/verificar";
     }
-
 }

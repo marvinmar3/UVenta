@@ -39,7 +39,8 @@ public class Usuario {
     @Column(name = "anio_egreso")
     private Integer anioEgreso;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    /** Obligatoria para estudiantes y egresados; el personal (@uv.mx) no tiene carrera. */
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_carrera")
     private Carrera carrera;
 

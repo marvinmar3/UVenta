@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Crear cuenta')}">
-    <meta charset="UTF-8">
-    <title>Crear cuenta - UVenta</title>
-    <link href="https://jsdelivr.net" rel="stylesheet">
-    <link href="../../static/css/uventa.css" rel="stylesheet">
-</head>
+<head th:replace="~{fragments/layout :: head('Crear cuenta')}"></head>
 <body>
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 <main class="container py-4" style="max-width: 560px;">
@@ -26,30 +21,16 @@
             <input id="apellidos" class="form-control" th:field="*{apellidos}" th:errorclass="is-invalid" autocomplete="family-name">
             <div class="invalid-feedback" th:errors="*{apellidos}"></div>
           </div>
+
           <div class="col-12">
             <label for="correo" class="form-label fw-semibold">Correo institucional</label>
             <input id="correo" type="email" class="form-control" th:field="*{correo}" th:errorclass="is-invalid"
-                   placeholder="@uv.mx o @estudiantes.uv.mx" autocomplete="email">
+                   placeholder="zS12345678@estudiantes.uv.mx" autocomplete="email">
             <div class="invalid-feedback" th:errors="*{correo}"></div>
+            <div id="deteccion" class="form-text text-success fw-semibold" aria-live="polite"></div>
           </div>
-          <div class="col-sm-6">
-            <label for="tipoUsuario" class="form-label fw-semibold">Soy</label>
-            <select id="tipoUsuario" class="form-select" th:field="*{tipoUsuario}">
-              <option value="ESTUDIANTE">Estudiante</option>
-              <option value="EGRESADO">Egresado(a)</option>
-            </select>
-          </div>
-          <div class="col-sm-6" id="bloque-matricula">
-            <label for="matricula" class="form-label fw-semibold">Matrícula</label>
-            <input id="matricula" class="form-control" th:field="*{matricula}" th:errorclass="is-invalid" placeholder="zS21012345">
-            <div class="invalid-feedback" th:errors="*{matricula}"></div>
-          </div>
-          <div class="col-sm-6" id="bloque-egreso">
-            <label for="anioEgreso" class="form-label fw-semibold">Año de egreso</label>
-            <input id="anioEgreso" type="number" class="form-control" th:field="*{anioEgreso}" th:errorclass="is-invalid" placeholder="2025">
-            <div class="invalid-feedback" th:errors="*{anioEgreso}"></div>
-          </div>
-          <div class="col-12">
+
+          <div class="col-12" id="bloque-carrera">
             <label for="idCarrera" class="form-label fw-semibold">Carrera</label>
             <select id="idCarrera" class="form-select" th:field="*{idCarrera}" th:errorclass="is-invalid">
               <option value="">Elige tu carrera</option>
@@ -57,6 +38,16 @@
             </select>
             <div class="invalid-feedback" th:errors="*{idCarrera}"></div>
           </div>
+
+          <div class="col-sm-6" id="bloque-egreso" hidden>
+            <label for="anioEgreso" class="form-label fw-semibold">Año de egreso</label>
+            <select id="anioEgreso" class="form-select" th:field="*{anioEgreso}" th:errorclass="is-invalid">
+              <option value="">Elige el año</option>
+              <option th:each="a : ${anios}" th:value="${a}" th:text="${a}"></option>
+            </select>
+            <div class="invalid-feedback" th:errors="*{anioEgreso}"></div>
+          </div>
+
           <div class="col-sm-6">
             <label for="password" class="form-label fw-semibold">Contraseña</label>
             <input id="password" type="password" class="form-control" th:field="*{password}" th:errorclass="is-invalid" autocomplete="new-password">
@@ -76,14 +67,36 @@
   </div>
 </main>
 <script>
-  // Muestra matrícula (estudiante) o año de egreso (egresado)
-  const tipo = document.getElementById('tipoUsuario');
+  // Solo ayuda visual: el servidor vuelve a deducir y validar todo a partir del correo.
+  const DOM = { est: 'estudiantes.uv.mx', egr: 'egresados.uv.mx', per: 'uv.mx' };
+  const correo = document.getElementById('correo');
+  const bloqueCarrera = document.getElementById('bloque-carrera');
+  const bloqueEgreso = document.getElementById('bloque-egreso');
+  const deteccion = document.getElementById('deteccion');
+
   function ajustar() {
-    const est = tipo.value === 'ESTUDIANTE';
-    document.getElementById('bloque-matricula').hidden = !est;
-    document.getElementById('bloque-egreso').hidden = est;
+    const v = correo.value.trim().toLowerCase();
+    const at = v.lastIndexOf('@');
+    const local = at > 0 ? v.slice(0, at) : '';
+    const dominio = at > 0 ? v.slice(at + 1) : '';
+    const esEst = dominio === DOM.est, esEgr = dominio === DOM.egr, esPer = dominio === DOM.per;
+
+    bloqueEgreso.hidden = !esEgr;   // año de egreso: solo egresados
+    bloqueCarrera.hidden = esPer;   // el personal de la UV no elige carrera
+
+    if (esEst && /^z[a-z]?\d{6,9}$/.test(local)) {
+      deteccion.textContent = 'Estudiante · matrícula ' + local.slice(1).toUpperCase();
+    } else if (esEst) {
+      deteccion.textContent = '';
+    } else if (esEgr) {
+      deteccion.textContent = 'Egresado(a) de la UV';
+    } else if (esPer) {
+      deteccion.textContent = 'Personal de la UV';
+    } else {
+      deteccion.textContent = '';
+    }
   }
-  tipo.addEventListener('change', ajustar);
+  correo.addEventListener('input', ajustar);
   ajustar();
 </script>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
