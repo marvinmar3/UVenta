@@ -7,9 +7,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import mx.uv.fiee.uventa.config.MicrosoftLoginSuccessHandler;
 
 @Configuration
 public class SecurityConfig {
+
+    private final MicrosoftLoginSuccessHandler microsoftLoginSuccessHandler;
+
+    public SecurityConfig(MicrosoftLoginSuccessHandler microsoftLoginSuccessHandler) {
+        this.microsoftLoginSuccessHandler = microsoftLoginSuccessHandler;
+    }
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -20,7 +27,7 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(a -> a
-                .requestMatchers("/login", "/registro", "/verificar", "/reenviar", "/error",
+                .requestMatchers("/login", "/registro", "/verificar", "/reenviar", "/error", "/oauth2/**", "/login/oauth2/**",
                                  "/css/**", "/js/**", "/img/**", "/favicon.ico").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated())
@@ -32,6 +39,10 @@ public class SecurityConfig {
                 .failureHandler((req, res, ex) ->
                     res.sendRedirect(ex instanceof DisabledException ? "/login?pendiente" : "/login?error"))
                 .permitAll())
+            .oauth2Login(o -> o
+                .loginPage("/login")
+                .successHandler(microsoftLoginSuccessHandler)
+                .failureUrl("/login?oauth2error"))
             .logout(l -> l.logoutSuccessUrl("/login?logout").permitAll());
         return http.build();
     }

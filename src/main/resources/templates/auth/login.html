@@ -28,6 +28,15 @@
                     Verificar ahora
                 </a>
             </div>
+            <div class="alert alert-danger" th:if="${param['acceso-denegado']}">
+                Solo se permiten cuentas institucionales de la Universidad Veracruzana.
+            </div>
+            <div class="alert alert-danger" th:if="${param['usuario-no-registrado']}">
+                Tu cuenta Microsoft es institucional, pero todavía no está registrada en UVenta.
+            </div>
+            <div class="alert alert-danger" th:if="${param.oauth2error}">
+                No fue posible iniciar sesión con Microsoft. Inténtalo nuevamente.
+            </div>
 
             <form th:action="@{/login}" method="post">
                 <label for="correo" class="form-label fw-semibold mt-2">Correo institucional</label>
@@ -36,6 +45,10 @@
                 <input id="password" name="password" type="password" class="form-control" required autocomplete="current-password">
                 <button type="submit" class="btn btn-primary w-100 mt-4">Entrar</button>
             </form>
+
+            <div class ="text-center my-3 text-secondary">o</div>
+            <a th:href="@{/oauth2/authorization/azure}"
+            class="btn btn-outline-primary w-100"><i class="bi bi-microsoft"></i> Iniciar sesión con Microsoft</a>
 
             <div class="nota-confianza mt-4">
                 Solo entan personas pertenecientes a la Universidad Veracruzana (<b>@uv.mx</b>, <b>estudiantes.uv.mx</b>, <b>@egresados.uv.mx</b>)
