@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Mis publicaciones')}"></head>
+<body class="has-tabbar">
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="container py-4" style="max-width: 980px;">
+  <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+    <h1 class="h3 fw-bold m-0">Mis publicaciones</h1>
+    <a class="btn btn-primary ms-auto" th:href="@{/publicar}"><i class="bi bi-plus-lg"></i> Nueva publicación</a>
+  </div>
+
+  <div class="alert alert-success d-flex gap-2" role="status" th:if="${exito}">
+    <i class="bi bi-check-circle-fill"></i><span th:text="${exito}">Listo</span>
+  </div>
+
+  <nav class="uv-tabs" aria-label="Filtrar por estado">
+    <a th:href="@{/mis-publicaciones}" th:classappend="${estadoSel == 'todas'} ? 'is-active'">Todas <span class="uv-count" th:text="${total}">0</span></a>
+    <a th:href="@{/mis-publicaciones(estado='activa')}" th:classappend="${estadoSel == 'activa'} ? 'is-active'">Activas <span class="uv-count" th:text="${nActivas}">0</span></a>
+    <a th:href="@{/mis-publicaciones(estado='pausada')}" th:classappend="${estadoSel == 'pausada'} ? 'is-active'">Pausadas <span class="uv-count" th:text="${nPausadas}">0</span></a>
+    <a th:href="@{/mis-publicaciones(estado='finalizada')}" th:classappend="${estadoSel == 'finalizada'} ? 'is-active'">Finalizadas <span class="uv-count" th:text="${nFinalizadas}">0</span></a>
+  </nav>
+
+  <div class="uv-empty mt-3" th:if="${#lists.isEmpty(filas)}">
+    <i class="bi bi-box-seam"></i>
+    <h2 class="h5 mt-2" th:text="${total == 0} ? 'Aún no has publicado nada' : 'No hay publicaciones en esta pestaña'">Vacío</h2>
+    <p class="uv-muted mb-3">Vende ese libro, regala lo que ya no usas o ofrece tu servicio a la comunidad.</p>
+    <a class="btn btn-primary" th:href="@{/publicar}"><i class="bi bi-plus-lg"></i> Publicar algo</a>
+  </div>
+
+  <div class="d-grid gap-3 mt-3">
+    <article class="uv-fila" th:each="p : ${filas}">
+      <a class="uv-fila__media" th:classappend="'tone-' + ${p.tono}" th:href="@{/publicacion/{id}(id=${p.id})}" aria-hidden="true" tabindex="-1">
+        <img th:if="${p.imagenUrl != null}" th:src="${p.imagenUrl}" alt="">
+        <i th:unless="${p.imagenUrl != null}" class="bi" th:classappend="${p.categoriaIcono}"></i>
+      </a>
+
+      <div class="uv-fila__info">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <span class="uv-estado" th:classappend="'uv-estado--' + ${p.estado.clase}" th:text="${p.estado.etiqueta}">Activa</span>
+          <span class="uv-chip uv-chip--sm" th:if="${p.destacada}"><i class="bi bi-star-fill text-warning"></i> Destacado</span>
+        </div>
+        <h2 class="uv-fila__titulo"><a th:href="@{/publicacion/{id}(id=${p.id})}" th:text="${p.titulo}">Título</a></h2>
+        <div class="small uv-muted">
+          <i class="bi" th:classappend="${p.tipo.icono}"></i> <span th:text="${p.tipo.etiqueta}">Venta</span>
+          · <span th:text="${p.categoria}">Categoría</span>
+          · <span th:text="${p.hace}">hace 1 h</span>
+        </div>
+        <div class="uv-fila__precio" th:text="${p.precioTexto}">$0</div>
+      </div>
+
+      <div class="uv-fila__acciones">
+        <a class="btn btn-light btn-sm" th:href="@{/publicacion/{id}(id=${p.id})}"><i class="bi bi-eye"></i> Ver</a>
+        <a class="btn btn-light btn-sm" th:href="@{/publicacion/{id}/editar(id=${p.id})}"><i class="bi bi-pencil"></i> Editar</a>
+        <div class="dropdown">
+          <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Más acciones">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+            <li th:if="${p.estado.name() == 'ACTIVA' or p.estado.name() == 'RESERVADA'}">
+              <form th:action="@{/publicacion/{id}/estado(id=${p.id})}" method="post" class="m-0">
+                <input type="hidden" name="accion" value="pausar">
+                <button class="dropdown-item" type="submit"><i class="bi bi-pause-circle me-2"></i>Pausar</button>
+              </form>
+            </li>
+            <li th:if="${p.estado.name() == 'PAUSADA' or p.estado.name() == 'FINALIZADA'}">
+              <form th:action="@{/publicacion/{id}/estado(id=${p.id})}" method="post" class="m-0">
+                <input type="hidden" name="accion" value="activar">
+                <button class="dropdown-item" type="submit"><i class="bi bi-play-circle me-2"></i>Activar de nuevo</button>
+              </form>
+            </li>
+            <li th:if="${p.estado.name() != 'FINALIZADA'}">
+              <form th:action="@{/publicacion/{id}/estado(id=${p.id})}" method="post" class="m-0">
+                <input type="hidden" name="accion" value="finalizar">
+                <button class="dropdown-item" type="submit"><i class="bi bi-check2-circle me-2"></i><span th:text="${p.tipo.finalizar}">Marcar como vendida</span></button>
+              </form>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form th:action="@{/publicacion/{id}/estado(id=${p.id})}" method="post" class="m-0"
+                    onsubmit="return confirm('¿Eliminar esta publicación? No se puede deshacer.');">
+                <input type="hidden" name="accion" value="eliminar">
+                <button class="dropdown-item text-danger" type="submit"><i class="bi bi-trash me-2"></i>Eliminar</button>
+              </form>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </article>
+  </div>
+</main>
+
+<nav th:replace="~{fragments/layout :: tabbar('cuenta')}"></nav>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${modo == 'crear' ? 'Publicar' : 'Editar publicación'})}"></head>
+<body class="has-tabbar">
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="container py-4" style="max-width: 1100px;">
+  <a class="fw-bold small text-decoration-none" th:href="${modo == 'crear' ? '/' : '/mis-publicaciones'}">
+    <i class="bi bi-arrow-left"></i> <span th:text="${modo == 'crear' ? 'Volver a explorar' : 'Volver a mis publicaciones'}">Volver</span>
+  </a>
+  <h1 class="h3 fw-bold mt-2 mb-1" th:text="${modo == 'crear' ? 'Publicar algo' : 'Editar publicación'}">Publicar algo</h1>
+  <p class="uv-muted" th:text="${modo == 'crear' ? 'Toma menos de un minuto. Publicar es gratis.' : 'Cambia lo que necesites y guarda.'}">Texto</p>
+
+  <form th:action="@{${accion}(_csrf=${_csrf.token})}" th:object="${form}" method="post"
+        enctype="multipart/form-data" id="formPublicar" novalidate>
+
+    <div class="alert alert-danger d-flex gap-2" role="alert"
+         th:if="${#fields.hasErrors('*') or errorFotos != null or (param.error != null and param.error[0] == 'tamano')}">
+      <i class="bi bi-exclamation-triangle"></i>
+      <div>
+        <strong>Revisa lo siguiente:</strong>
+        <span th:if="${param.error != null and param.error[0] == 'tamano'}"> alguna foto pesa demasiado (máximo 5 MB por foto).</span>
+        <span th:if="${errorFotos != null}" th:text="${errorFotos}"></span>
+        <span th:if="${fotosPerdidas}"> Vuelve a seleccionar tus fotos.</span>
+        <span th:if="${#fields.hasErrors('*')}">Hay campos marcados en rojo.</span>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-8">
+
+        <!-- 1. Tipo -->
+        <section class="uv-panel">
+          <h2 class="uv-panel__title"><span class="uv-step">1</span> ¿Qué quieres hacer?</h2>
+          <div class="uv-tipos" role="radiogroup" aria-label="Tipo de publicación">
+            <th:block th:each="t : ${tipos}">
+              <input type="radio" class="btn-check" name="tipo" th:id="'tp-' + ${t.clase}"
+                     th:value="${t.name()}" th:checked="${form.tipo == t}">
+              <label class="uv-tipo" th:for="'tp-' + ${t.clase}">
+                <i class="bi" th:classappend="${t.icono}"></i>
+                <strong th:text="${t.verbo}">Vender</strong>
+                <span th:text="${t.ayuda}">Ayuda</span>
+              </label>
+            </th:block>
+          </div>
+          <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('tipo')}" th:errors="*{tipo}"></div>
+        </section>
+
+        <!-- 2. Fotos -->
+        <section class="uv-panel">
+          <h2 class="uv-panel__title"><span class="uv-step">2</span> Fotos <small class="uv-muted fw-normal">(recomendado)</small></h2>
+
+          <div class="uv-previews mb-3" th:if="${imagenes != null and !#lists.isEmpty(imagenes)}">
+            <label class="uv-thumb" th:each="im : ${imagenes}">
+              <img th:src="${im.url}" alt="Foto actual de la publicación">
+              <input type="checkbox" class="uv-thumb__chk" name="quitar" th:value="${im.id}">
+              <span class="uv-thumb__x"><i class="bi bi-trash"></i> <span class="t-quitar">Quitar</span><span class="t-quitada">Se quitará</span></span>
+            </label>
+          </div>
+
+          <div class="uv-drop">
+            <input type="file" id="fotos" name="fotos" class="visually-hidden" multiple
+                   accept="image/jpeg,image/png" th:attr="data-max=${maxFotos}">
+            <label for="fotos" class="uv-drop__label">
+              <i class="bi bi-cloud-arrow-up"></i>
+              <strong>Agrega hasta <span th:text="${maxFotos}">4</span> fotos</strong>
+              <span>JPG o PNG · máximo 5 MB cada una</span>
+            </label>
+          </div>
+          <div class="uv-previews mt-3" id="previews" aria-live="polite"></div>
+          <p class="small text-danger mt-2 mb-0" id="msgFotos" role="alert" hidden></p>
+        </section>
+
+        <!-- 3. Detalles -->
+        <section class="uv-panel">
+          <h2 class="uv-panel__title"><span class="uv-step">3</span> Detalles</h2>
+
+          <label class="form-label fw-bold" for="titulo">Título</label>
+          <input id="titulo" class="form-control" th:field="*{titulo}" th:errorclass="is-invalid" maxlength="180"
+                 placeholder="Ej. Calculadora científica Casio fx-991">
+          <div class="invalid-feedback" th:errors="*{titulo}"></div>
+
+          <div class="row g-3 mt-0">
+            <div class="col-md-6">
+              <label class="form-label fw-bold" for="categoriaId">Categoría</label>
+              <select id="categoriaId" class="form-select" th:field="*{categoriaId}" th:errorclass="is-invalid">
+                <option value="">Elige una categoría</option>
+                <option th:each="c : ${categorias}" th:value="${c.id}" th:text="${c.nombre}">Categoría</option>
+              </select>
+              <div class="invalid-feedback" th:errors="*{categoriaId}"></div>
+            </div>
+            <div class="col-md-6" id="bloquePrecio">
+              <label class="form-label fw-bold" for="precio">Precio (MXN)</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input id="precio" type="number" min="0" step="0.01" inputmode="decimal" class="form-control"
+                       th:field="*{precio}" th:errorclass="is-invalid" placeholder="0.00">
+                <div class="invalid-feedback" th:errors="*{precio}"></div>
+              </div>
+            </div>
+          </div>
+
+          <span class="form-label fw-bold d-block mt-3">Condición</span>
+          <div class="uv-seg uv-seg--4" role="radiogroup" aria-label="Condición">
+            <th:block th:each="c : ${condiciones}">
+              <input type="radio" class="btn-check" name="condicion" th:id="'cd-' + ${c.name()}"
+                     th:value="${c.name()}" th:checked="${form.condicion == c}">
+              <label class="uv-seg__btn" th:for="'cd-' + ${c.name()}" th:text="${c.etiqueta}">Usado</label>
+            </th:block>
+          </div>
+          <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('condicion')}" th:errors="*{condicion}"></div>
+
+          <label class="form-label fw-bold mt-3" for="descripcion">Descripción</label>
+          <textarea id="descripcion" rows="5" class="form-control" th:field="*{descripcion}" th:errorclass="is-invalid"
+                    maxlength="2000" placeholder="Cuenta el estado, qué incluye y cualquier detalle útil."></textarea>
+          <div class="d-flex justify-content-between">
+            <div class="invalid-feedback d-block" th:errors="*{descripcion}"></div>
+            <small class="uv-muted ms-auto"><span id="contador">0</span>/2000</small>
+          </div>
+
+          <div class="row g-3 mt-0">
+            <div class="col-md-8">
+              <label class="form-label fw-bold" for="materia">Materia <small class="uv-muted fw-normal">(opcional)</small></label>
+              <input id="materia" class="form-control" th:field="*{materia}" th:errorclass="is-invalid" maxlength="120"
+                     placeholder="Ej. Circuitos eléctricos">
+              <div class="invalid-feedback" th:errors="*{materia}"></div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold" for="semestre">Semestre <small class="uv-muted fw-normal">(opcional)</small></label>
+              <select id="semestre" class="form-select" th:field="*{semestre}" th:errorclass="is-invalid">
+                <option value="">—</option>
+                <option th:each="s : ${#numbers.sequence(1, 10)}" th:value="${s}" th:text="${s}">1</option>
+              </select>
+              <div class="invalid-feedback" th:errors="*{semestre}"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Entrega -->
+        <section class="uv-panel">
+          <h2 class="uv-panel__title"><span class="uv-step">4</span> Entrega</h2>
+          <label class="form-label fw-bold" for="puntoEntrega"><i class="bi bi-geo-alt"></i> Punto de entrega sugerido</label>
+          <select id="puntoEntrega" class="form-select" th:field="*{puntoEntrega}" th:errorclass="is-invalid">
+            <option th:each="p : ${puntos}" th:value="${p}" th:text="${p}">Biblioteca</option>
+          </select>
+          <div class="invalid-feedback" th:errors="*{puntoEntrega}"></div>
+          <div class="form-text">Las entregas se hacen dentro de la facultad, en lugares con gente y en horario de clases.</div>
+        </section>
+
+        <div class="d-flex flex-wrap gap-2">
+          <button type="submit" class="btn btn-primary btn-lg px-4" id="btnPublicar">
+            <i class="bi" th:classappend="${modo == 'crear' ? 'bi-send' : 'bi-check2-circle'}"></i>
+            <span th:text="${modo == 'crear' ? 'Publicar ahora' : 'Guardar cambios'}">Publicar ahora</span>
+          </button>
+          <a class="btn btn-light btn-lg" th:href="${modo == 'crear' ? '/' : '/mis-publicaciones'}">Cancelar</a>
+        </div>
+      </div>
+
+      <!-- Consejos -->
+      <aside class="col-lg-4">
+        <div class="uv-sticky-lg">
+          <div class="uv-panel uv-tips">
+            <h2 class="uv-panel__title"><i class="bi bi-lightbulb text-warning"></i> Para vender mejor</h2>
+            <ul class="uv-tips__list">
+              <li><i class="bi bi-camera"></i><span><strong>Fotos claras.</strong> Con buena luz y de frente. Las publicaciones con foto se ven más.</span></li>
+              <li><i class="bi bi-journal-text"></i><span><strong>Título directo.</strong> Marca, modelo y materia si aplica.</span></li>
+              <li><i class="bi bi-currency-dollar"></i><span><strong>Precio justo.</strong> Compara con lo nuevo y ofrece un buen ahorro.</span></li>
+              <li><i class="bi bi-shield-check"></i><span><strong>Entrega segura.</strong> Cita siempre en la facultad y no compartas contraseñas ni códigos.</span></li>
+            </ul>
+            <div class="uv-tips__feat">
+              <i class="bi bi-stars"></i>
+              <span><strong>¿Quieres más visibilidad?</strong> Pronto podrás destacar tu publicación por $20 a la semana.</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </form>
+</main>
+
+<nav th:replace="~{fragments/layout :: tabbar('publicar')}"></nav>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+<script th:src="@{/js/publicar.js}"></script>
+</body>
+</html>

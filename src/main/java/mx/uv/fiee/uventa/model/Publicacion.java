@@ -61,7 +61,7 @@ public class Publicacion {
     /** smallint en la base (V3): debe ser Short para que Hibernate valide el tipo. */
     private Short semestre;
 
-    @OneToMany(mappedBy = "publicacion")
+    @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("orden ASC")
     @BatchSize(size = 50)
     private List<ImagenPublicacion> imagenes = new ArrayList<>();

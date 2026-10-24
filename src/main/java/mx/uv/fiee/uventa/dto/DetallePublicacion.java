@@ -11,6 +11,7 @@ import mx.uv.fiee.uventa.model.Publicacion;
 import mx.uv.fiee.uventa.model.TipoOferta;
 import mx.uv.fiee.uventa.model.Usuario;
 import mx.uv.fiee.uventa.util.Formato;
+import mx.uv.fiee.uventa.model.EstadoPublicacion;
 
 @Getter @Builder
 public class DetallePublicacion {
@@ -32,11 +33,13 @@ public class DetallePublicacion {
     private final Instant fecha;
     private final List<String> imagenes;
     private final boolean destacada;
+    private final boolean propia;
+    private final EstadoPublicacion estado;
 
     public String getPrecioTexto() { return Formato.precioTexto(tipo, precio); }
     public String getHace() { return Formato.hace(fecha); }
 
-    public static DetallePublicacion de(Publicacion p, boolean destacada) {
+    public static DetallePublicacion de(Publicacion p, boolean destacada, boolean propia) {
         Usuario u = p.getUsuario();
         return DetallePublicacion.builder()
                 .id(p.getId())
@@ -57,6 +60,8 @@ public class DetallePublicacion {
                 .fecha(p.getFechaPublicacion())
                 .imagenes(p.getImagenes().stream().map(ImagenPublicacion::getUrl).toList())
                 .destacada(destacada)
+                .propia(propia)
+                .estado(p.getEstado())
                 .build();
     }
     

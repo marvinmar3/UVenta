@@ -8,6 +8,7 @@ import mx.uv.fiee.uventa.model.Publicacion;
 import mx.uv.fiee.uventa.model.TipoOferta;
 import mx.uv.fiee.uventa.model.Usuario;
 import mx.uv.fiee.uventa.util.Formato;
+import mx.uv.fiee.uventa.model.EstadoPublicacion;
 
 /** Datos ya listos para pintar una tarjeta (evita cargar entidades en la vista). */
 @Getter @Builder
@@ -26,6 +27,7 @@ public class TarjetaPublicacion {
     private final Instant fecha;
     private final String imagenUrl;
     private final boolean destacada;
+    private final EstadoPublicacion estado;
 
     public String getPrecioTexto() { return Formato.precioTexto(tipo, precio); }
     public String getMeta() { return Formato.meta(materia, semestre); }
@@ -48,6 +50,7 @@ public class TarjetaPublicacion {
                 .fecha(p.getFechaPublicacion())
                 .imagenUrl(p.getImagenes().isEmpty() ? null : p.getImagenes().get(0).getUrl())
                 .destacada(destacada)
+                .estado(p.getEstado())
                 .build();
     }
 }

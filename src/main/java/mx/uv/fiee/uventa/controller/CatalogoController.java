@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import java.security.Principal;
 
 @Controller 
 @RequiredArgsConstructor 
@@ -40,8 +41,8 @@ public class CatalogoController {
     }
 
     @GetMapping("/publicacion/{id}")
-    public String detalle(@PathVariable Long id, Model model) {
-        model.addAttribute("p", catalogo.detalle(id));
+    public String detalle(@PathVariable Long id,Principal principal, Model model) {
+        model.addAttribute("p", catalogo.detalle(id, principal.getName()));
         return "publicacion/detalle";
     }
 

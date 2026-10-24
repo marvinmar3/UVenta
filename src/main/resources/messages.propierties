@@ -1,0 +1,7 @@
+# Mensajes de validación en español (Spring los usa en lugar de los textos técnicos)
+typeMismatch=El valor no es válido.
+typeMismatch.java.math.BigDecimal=Escribe un número válido.
+typeMismatch.java.lang.Integer=Escribe un número válido.
+typeMismatch.java.lang.Long=Elige una opción válida.
+typeMismatch.tipo=Elige qué quieres hacer.
+typeMismatch.condicion=Elige la condición.

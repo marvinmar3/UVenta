@@ -65,13 +65,15 @@ public class CatalogoService {
     }
 
     @Transactional(readOnly = true)
-    public DetallePublicacion detalle(Long id) {
+    public DetallePublicacion detalle(Long id, String correoSolicitante) {
         Publicacion p = publicaciones.findById(id)
-                .filter(x -> x.getEstado() == EstadoPublicacion.ACTIVA
-                          || x.getEstado() == EstadoPublicacion.RESERVADA)
+                .filter(x -> x.getEstado() != EstadoPublicacion.ELIMINADA)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        boolean propia = p.getUsuario().getCorreoInstitucional().equalsIgnoreCase(correoSolicitante);
+        boolean visible = p.getEstado() == EstadoPublicacion.ACTIVA || p.getEstado() == EstadoPublicacion.RESERVADA;
+        if (!propia && !visible) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         boolean destacada = publicaciones.idsDestacadasVigentes().contains(id);
-        return DetallePublicacion.de(p, destacada);
+        return DetallePublicacion.de(p, destacada, propia);
     }
 
     private static Sort orden(String orden) {

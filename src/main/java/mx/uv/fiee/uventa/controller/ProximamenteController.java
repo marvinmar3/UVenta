@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ProximamenteController {
 
     private static final Map<String, String[]> SECCIONES = Map.of(
-        "/publicar", new String[]{"Publicar", "bi-plus-circle",
-            "Aquí podrás subir tu libro, componente, comida o servicio con fotos en menos de un minuto."},
         "/favoritos", new String[]{"Favoritos", "bi-heart",
             "Guarda lo que te interesa para encontrarlo después."},
         "/chat", new String[]{"Mensajes", "bi-chat-dots",
@@ -22,7 +20,7 @@ public class ProximamenteController {
         "/cuenta", new String[]{"Mi cuenta", "bi-person-circle",
             "Aquí verás y editarás tu perfil."});
 
-    @GetMapping({"/publicar", "/favoritos", "/chat", "/mis-publicaciones", "/cuenta"})
+    @GetMapping({"/favoritos", "/chat", "/cuenta"})
     public String seccion(HttpServletRequest req, Model model) {
         String[] s = SECCIONES.get(req.getRequestURI());
         model.addAttribute("titulo", s[0]);

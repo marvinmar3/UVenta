@@ -18,21 +18,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-/* carga publicaciones de ejemplo para ver el diseño de la pagina principal
-    solo corre con el perfil deemo y unicamente si todavia no hay publicaciones
-        los vendedores de ejemplo estan inactivos nadie puede iniciar sesion con ellos */
-
-
-@Component 
-@Profile ("demo")
-@RequiredArgsConstructor
+/**
+ * Carga publicaciones de ejemplo para ver el diseño de la página principal.
+ * Solo corre con el perfil "demo" y únicamente si todavía no hay publicaciones.
+ * Los vendedores de ejemplo están inactivos: nadie puede iniciar sesión con ellos.
+ */
+@Component
+@Profile("demo")
 @Slf4j
+@RequiredArgsConstructor
 public class DemoDataLoader implements ApplicationRunner {
 
     private final UsuarioRepository usuarios;
     private final CarreraRepository carreras;
-    private final PublicacionRepository publicaciones;
     private final CategoriaRepository categorias;
+    private final PublicacionRepository publicaciones;
     private final PasswordEncoder encoder;
 
     @PersistenceContext
@@ -42,14 +42,14 @@ public class DemoDataLoader implements ApplicationRunner {
 
     @Override
     @Transactional
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         if (publicaciones.count() > 0) {
-            log.info("DemoDataLoader: ya hay publicaciones, no se cargan datos de ejemplo");
+            log.info("[DEMO] Ya hay publicaciones; no se cargan datos de ejemplo.");
             return;
         }
         List<Carrera> cs = carreras.findByActivaTrueOrderByNombreAsc();
         if (cs.isEmpty()) {
-            log.warn("DemoDataLoader: no hay carreras activas, no se cargan datos de ejemplo");
+            log.warn("[DEMO] No hay carreras en la base; se omiten los datos de ejemplo.");
             return;
         }
         Usuario ana = vendedor("Ana", "López Cruz", "demo.ana", "S00000001", cs.get(0));
@@ -149,5 +149,4 @@ public class DemoDataLoader implements ApplicationRunner {
                 .executeUpdate();
         }
     }
-    
 }
