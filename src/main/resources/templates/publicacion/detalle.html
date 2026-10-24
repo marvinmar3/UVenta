@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${p.titulo})}"></head>
+<body class="has-tabbar">
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="container py-4">
+  <a class="fw-bold small text-decoration-none" th:href="@{/}"><i class="bi bi-arrow-left"></i> Volver a explorar</a>
+
+  <div class="row g-4 mt-1">
+    <div class="col-lg-7">
+      <div class="uv-gallery__main" th:classappend="'tone-' + ${p.tono}">
+        <img th:if="${!#lists.isEmpty(p.imagenes)}" th:src="${p.imagenes[0]}" th:alt="${p.titulo}">
+        <i th:if="${#lists.isEmpty(p.imagenes)}" class="bi" th:classappend="${p.categoriaIcono}" aria-hidden="true"></i>
+      </div>
+      <div class="uv-gallery__thumbs" th:if="${#lists.size(p.imagenes) > 1}">
+        <img th:each="url : ${p.imagenes}" th:src="${url}" alt="" loading="lazy">
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="d-flex flex-wrap gap-2 mb-2">
+        <span class="uv-chip"><i class="bi" th:classappend="${p.tipo.icono}"></i> <span th:text="${p.tipo.etiqueta}">Venta</span></span>
+        <span class="uv-chip"><i class="bi" th:classappend="${p.categoriaIcono}"></i> <span th:text="${p.categoria}">Categoría</span></span>
+        <span class="uv-chip" th:if="${p.destacada}"><i class="bi bi-star-fill text-warning"></i> Destacado</span>
+      </div>
+
+      <h1 class="h3 fw-bold" th:text="${p.titulo}">Título</h1>
+      <div class="uv-price-lg" th:classappend="${p.tipo.clase == 'donacion'} ? 'is-donacion'" th:text="${p.precioTexto}">$0</div>
+
+      <ul class="uv-info">
+        <li th:if="${p.condicion != null}"><i class="bi bi-check-circle"></i><span>Condición: <strong th:text="${p.condicion.etiqueta}">Usado</strong></span></li>
+        <li th:if="${p.materia != null}"><i class="bi bi-journal-text"></i><span>Materia: <strong th:text="${p.materia}">Materia</strong></span></li>
+        <li th:if="${p.semestre != null}"><i class="bi bi-mortarboard"></i><span>Semestre: <strong th:text="${p.semestre}">1</strong></span></li>
+        <li th:if="${p.puntoEntrega != null}"><i class="bi bi-geo-alt"></i><span>Entrega sugerida: <strong th:text="${p.puntoEntrega}">Biblioteca</strong></span></li>
+        <li><i class="bi bi-clock"></i><span>Publicado <span th:text="${p.hace}">hoy</span></span></li>
+      </ul>
+
+      <h2 class="h6 fw-bold">Descripción</h2>
+      <p style="white-space: pre-line" th:text="${p.descripcion}">Descripción</p>
+
+      <div class="uv-seller my-3">
+        <span class="uv-avatar" th:text="${p.iniciales}">AB</span>
+        <div>
+          <strong th:text="${p.vendedor}">Vendedor</strong>
+          <div class="small uv-muted" th:if="${p.carreraVendedor != null}" th:text="${p.carreraVendedor}">Carrera</div>
+          <div class="small text-success fw-bold"><i class="bi bi-patch-check-fill"></i> Verificado UV</div>
+        </div>
+      </div>
+
+      <a class="btn btn-primary btn-lg w-100" th:href="@{/chat}"><i class="bi bi-chat-dots"></i> Contactar al vendedor</a>
+
+      <div class="uv-safe">
+        <i class="bi bi-shield-check"></i>
+        <div class="small">Acuerden la entrega dentro de la facultad, en un lugar con gente y en horario de clases. No compartas contraseñas ni códigos.</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<nav th:replace="~{fragments/layout :: tabbar('explorar')}"></nav>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

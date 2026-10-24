@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${titulo})}"></head>
+<body class="has-tabbar">
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main class="container">
+  <section class="uv-soon">
+    <div class="uv-soon__icon"><i class="bi" th:classappend="${icono}"></i></div>
+    <h1 class="h3 fw-bold" th:text="${titulo}">Sección</h1>
+    <p class="uv-muted" th:text="${texto}">Texto</p>
+    <span class="uv-chip mb-3"><i class="bi bi-hourglass-split"></i> Próximamente</span><br>
+    <a class="btn btn-primary mt-2" th:href="@{/}"><i class="bi bi-compass"></i> Volver a explorar</a>
+  </section>
+</main>
+<nav th:replace="~{fragments/layout :: tabbar('cuenta')}"></nav>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

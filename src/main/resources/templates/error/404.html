@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('No encontrado')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<main class="container">
+  <section class="uv-soon">
+    <div class="uv-soon__icon"><i class="bi bi-compass"></i></div>
+    <h1 class="h3 fw-bold">No encontramos esa página</h1>
+    <p class="uv-muted">Puede que la publicación ya no esté disponible o que el enlace tenga un error.</p>
+    <a class="btn btn-primary" th:href="@{/}"><i class="bi bi-compass"></i> Volver a explorar</a>
+  </section>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

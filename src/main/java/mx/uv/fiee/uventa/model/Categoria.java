@@ -23,4 +23,8 @@ public class Categoria {
 
     @Column(nullable = false)
     private boolean activa = true;
+
+    /** Clase de Bootstrap Icons, p. ej. "bi-book" (columna agregada en V5). */
+    @Column(nullable = false, length = 40)
+    private String icono = "bi-grid";
 }

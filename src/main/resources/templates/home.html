@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Explorar')}"></head>
+<body class="has-tabbar">
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="container">
+
+  <!-- Portada: solo cuando no hay búsqueda ni filtros -->
+  <section class="uv-hero" th:unless="${filtrado}">
+    <div>
+      <span class="uv-eyebrow"><i class="bi bi-patch-check-fill"></i> Comunidad verificada UV</span>
+      <h1>Lo que necesitas, <span>ya está en tu facultad</span></h1>
+      <p>Compra, vende, intercambia y dona entre compañeros. Ahorra dinero, dale una segunda vida a tus cosas y entrega seguro dentro del campus.</p>
+      <div class="uv-hero__cta">
+        <a class="btn btn-primary btn-lg" th:href="@{/publicar}"><i class="bi bi-plus-lg"></i> Publicar algo</a>
+        <a class="btn btn-light btn-lg" href="#explorar"><i class="bi bi-compass"></i> Explorar</a>
+      </div>
+    </div>
+    <div class="uv-hero__art" aria-hidden="true">
+      <div class="uv-art-tile"><i class="bi bi-book"></i></div>
+      <div class="uv-art-tile"><i class="bi bi-cpu"></i></div>
+      <div class="uv-art-tile"><i class="bi bi-cup-hot"></i></div>
+      <div class="uv-art-tile"><i class="bi bi-gift"></i></div>
+    </div>
+  </section>
+
+  <!-- Categorías -->
+  <nav class="uv-cats" aria-label="Categorías">
+    <a class="uv-cat" th:href="@{/}" th:classappend="${f.categoria == null} ? 'is-active'">
+      <span class="uv-cat__icon"><i class="bi bi-grid"></i></span><span>Todo</span>
+    </a>
+    <a class="uv-cat" th:each="c : ${categorias}" th:href="@{/(categoria=${c.id})}"
+       th:classappend="${f.categoria == c.id} ? 'is-active'">
+      <span class="uv-cat__icon"><i class="bi" th:classappend="${c.icono}"></i></span>
+      <span th:text="${c.nombre}">Categoría</span>
+    </a>
+  </nav>
+
+  <!-- Destacados -->
+  <section th:if="${!#lists.isEmpty(destacadas)}" aria-labelledby="t-dest">
+    <div class="uv-sec-head">
+      <h2 id="t-dest"><i class="bi bi-stars"></i> Destacados</h2>
+      <span class="uv-muted">Publicaciones promocionadas por la comunidad</span>
+    </div>
+    <div class="uv-rail">
+      <div class="uv-rail__item" th:each="p : ${destacadas}">
+        <th:block th:replace="~{fragments/tarjeta :: tarjeta(${p})}"></th:block>
+      </div>
+    </div>
+  </section>
+
+  <!-- Listado con filtros -->
+  <div class="row g-4 mt-1" id="explorar">
+
+    <div class="col-lg-3">
+      <div class="uv-sticky">
+        <button class="btn btn-light w-100 d-lg-none" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#panelFiltros" aria-controls="panelFiltros">
+          <i class="bi bi-sliders"></i> Filtros
+        </button>
+
+        <aside class="offcanvas-lg offcanvas-start uv-filters" tabindex="-1" id="panelFiltros" aria-labelledby="t-filtros">
+          <div class="offcanvas-header">
+            <h2 class="h5 m-0" id="t-filtros">Filtros</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#panelFiltros" aria-label="Cerrar"></button>
+          </div>
+          <div class="offcanvas-body">
+            <form th:action="@{/}" method="get">
+              <h2 class="d-none d-lg-flex"><i class="bi bi-sliders"></i> Filtros</h2>
+              <input type="hidden" name="q" th:value="${f.q}">
+              <input type="hidden" name="categoria" th:if="${f.categoria != null}" th:value="${f.categoria}">
+
+              <span class="etq">Tipo de oferta</span>
+              <div class="uv-seg">
+                <input type="radio" class="btn-check" name="tipo" id="tipo-todos" value="" th:checked="${f.tipo == null}">
+                <label class="uv-seg__btn" for="tipo-todos"><i class="bi bi-collection"></i> Todos</label>
+                <th:block th:each="t : ${tipos}">
+                  <input type="radio" class="btn-check" name="tipo" th:id="'tipo-' + ${t.clase}"
+                         th:value="${t.name()}" th:checked="${f.tipo == t}">
+                  <label class="uv-seg__btn" th:for="'tipo-' + ${t.clase}">
+                    <i class="bi" th:classappend="${t.icono}"></i> <span th:text="${t.etiqueta}">Tipo</span>
+                  </label>
+                </th:block>
+              </div>
+
+              <label class="etq" for="f-carrera">Carrera del vendedor</label>
+              <select id="f-carrera" name="carrera" class="form-select">
+                <option value="">Todas</option>
+                <option th:each="c : ${carreras}" th:value="${c.id}" th:text="${c.nombre}"
+                        th:selected="${f.carrera == c.id}">Carrera</option>
+              </select>
+
+              <label class="etq" for="f-semestre">Semestre</label>
+              <select id="f-semestre" name="semestre" class="form-select">
+                <option value="">Cualquiera</option>
+                <option th:each="s : ${#numbers.sequence(1, 10)}" th:value="${s}" th:text="'Semestre ' + ${s}"
+                        th:selected="${f.semestre == s}">1</option>
+              </select>
+
+              <label class="etq" for="f-precio">Precio máximo (MXN)</label>
+              <input id="f-precio" name="precioMax" type="number" min="0" step="1" inputmode="numeric"
+                     class="form-control" placeholder="Sin límite" th:value="${f.precioMax}">
+
+              <label class="etq" for="f-orden">Ordenar por</label>
+              <select id="f-orden" name="orden" class="form-select">
+                <option value="recientes" th:selected="${f.orden == 'recientes'}">Más recientes</option>
+                <option value="precio_asc" th:selected="${f.orden == 'precio_asc'}">Precio: menor a mayor</option>
+                <option value="precio_desc" th:selected="${f.orden == 'precio_desc'}">Precio: mayor a menor</option>
+              </select>
+
+              <button type="submit" class="btn btn-primary w-100 mt-4"><i class="bi bi-funnel"></i> Aplicar filtros</button>
+              <a class="btn btn-link w-100" th:href="@{/}">Limpiar</a>
+            </form>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <div class="col-lg-9">
+      <div class="uv-sec-head" style="margin-top:0">
+        <h2>
+          <i class="bi" th:classappend="${filtrado} ? 'bi-search' : 'bi-lightning-charge'"></i>
+          <span th:text="${filtrado} ? 'Resultados' : 'Recién publicado'">Recién publicado</span>
+        </h2>
+        <span class="uv-muted">
+          <span th:text="${page.totalElements}">0</span> publicaciones
+          <th:block th:if="${f.q != null and !#strings.isEmpty(f.q)}">para “<strong th:text="${f.q}"></strong>”</th:block>
+        </span>
+        <a th:if="${filtrado}" class="ms-auto small fw-bold" th:href="@{/}"><i class="bi bi-x-lg"></i> Quitar filtros</a>
+      </div>
+
+      <div class="row g-3 row-cols-2 row-cols-md-3 row-cols-xxl-4" th:unless="${page.empty}">
+        <div class="col" th:each="p : ${page.content}">
+          <th:block th:replace="~{fragments/tarjeta :: tarjeta(${p})}"></th:block>
+        </div>
+      </div>
+
+      <div class="uv-empty" th:if="${page.empty}">
+        <i class="bi bi-search"></i>
+        <h3 class="h5 mt-2">No encontramos publicaciones</h3>
+        <p class="uv-muted mb-3">Prueba con otras palabras o quita algún filtro. Si buscas algo en especial, ¡publícalo!</p>
+        <a class="btn btn-primary" th:href="@{/}">Ver todo</a>
+      </div>
+
+      <nav th:if="${page.totalPages > 1}" aria-label="Páginas de resultados" class="mt-4">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+            <a class="page-link" th:href="${base + 'page=' + (page.number - 1)}" aria-label="Anterior"><i class="bi bi-chevron-left"></i></a>
+          </li>
+          <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+              th:if="${i == 0 or i == page.totalPages - 1 or (i >= page.number - 2 and i <= page.number + 2)}"
+              th:classappend="${i == page.number} ? 'active'">
+            <a class="page-link" th:href="${base + 'page=' + i}" th:text="${i + 1}">1</a>
+          </li>
+          <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+            <a class="page-link" th:href="${base + 'page=' + (page.number + 1)}" aria-label="Siguiente"><i class="bi bi-chevron-right"></i></a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="uv-safe">
+        <i class="bi bi-shield-check"></i>
+        <div>
+          <strong>Entrega segura en el campus</strong><br>
+          <span class="uv-muted">Acuerda el punto de encuentro en la biblioteca, la cafetería o la explanada, en horario de clases.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<nav th:replace="~{fragments/layout :: tabbar('explorar')}"></nav>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

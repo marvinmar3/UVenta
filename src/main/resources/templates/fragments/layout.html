@@ -2,30 +2,54 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<!-- Uso: <head th:replace="~{fragments/layout :: head('Título')}"></head> -->
+<!-- <head th:replace="~{fragments/layout :: head('Título')}"></head> -->
 <head th:fragment="head(titulo)">
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title th:text="${titulo} + ' · UVenta'">UVenta</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/css/uventa.css}">
   <link rel="icon" type="image/svg+xml" th:href="@{/img/logo.svg}">
 </head>
 
-<!-- Uso: <nav th:replace="~{fragments/layout :: navbar}"></nav> -->
-<nav th:fragment="navbar" class="navbar sticky-top">
-  <div class="container">
-    <a class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4" th:href="@{/}">
-      <img th:src="@{/img/logo.svg}" width="36" height="36" alt=""> UVenta
+<!-- <header th:replace="~{fragments/layout :: navbar}"></header> -->
+<header th:fragment="navbar" class="uv-nav sticky-top">
+  <div class="container uv-nav__row">
+    <a class="uv-brand" th:href="@{/}">
+      <img th:src="@{/img/logo.svg}" width="36" height="36" alt=""> <span>UVenta</span>
     </a>
-    <div class="d-flex align-items-center gap-2">
+
+    <form th:if="${nombreUsuario != null}" class="uv-search" th:action="@{/}" method="get" role="search">
+      <i class="bi bi-search" aria-hidden="true"></i>
+      <input type="search" name="q" th:value="${f != null ? f.q : null}"
+             placeholder="Busca libros, componentes, comida, asesorías…" aria-label="Buscar en UVenta">
+    </form>
+
+    <div class="uv-actions">
       <th:block th:if="${nombreUsuario != null}">
-        <span class="small d-none d-sm-inline" th:text="'Hola, ' + ${nombreUsuario}">Hola</span>
-        <form th:action="@{/logout}" method="post" class="m-0">
-          <button type="submit" class="btn btn-outline-secondary btn-sm">Salir</button>
-        </form>
+        <a class="btn btn-accent d-none d-md-inline-flex" th:href="@{/publicar}"><i class="bi bi-plus-lg"></i> Publicar</a>
+        <a class="uv-iconbtn d-none d-md-grid" th:href="@{/favoritos}" aria-label="Favoritos"><i class="bi bi-heart"></i></a>
+        <a class="uv-iconbtn d-none d-md-grid" th:href="@{/chat}" aria-label="Mensajes"><i class="bi bi-chat-dots"></i></a>
+        <div class="dropdown">
+          <button class="uv-avatar-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Mi cuenta">
+            <span class="uv-avatar" th:text="${#strings.toUpperCase(#strings.substring(nombreUsuario, 0, 1))}">U</span>
+            <i class="bi bi-chevron-down small d-none d-sm-inline"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+            <li class="dropdown-header" th:text="'Hola, ' + ${nombreUsuario}">Hola</li>
+            <li><a class="dropdown-item" th:href="@{/mis-publicaciones}"><i class="bi bi-box-seam me-2"></i>Mis publicaciones</a></li>
+            <li><a class="dropdown-item" th:href="@{/cuenta}"><i class="bi bi-person-circle me-2"></i>Mi cuenta</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form th:action="@{/logout}" method="post" class="m-0">
+                <button class="dropdown-item" type="submit"><i class="bi bi-box-arrow-right me-2"></i>Salir</button>
+              </form>
+            </li>
+          </ul>
+        </div>
       </th:block>
       <th:block th:if="${nombreUsuario == null}">
         <a class="btn btn-link" th:href="@{/login}">Entrar</a>
@@ -33,9 +57,22 @@
       </th:block>
     </div>
   </div>
+</header>
+
+<!-- <nav th:replace="~{fragments/layout :: tabbar('explorar')}"></nav>  (activa: explorar | publicar | chat | cuenta) -->
+<nav th:fragment="tabbar(activa)" class="uv-tabbar" aria-label="Navegación principal">
+  <a th:href="@{/}" th:classappend="${activa == 'explorar'} ? 'is-active'"><i class="bi bi-compass"></i>Explorar</a>
+  <a th:href="@{/publicar}" class="is-main"><i class="bi bi-plus-lg"></i>Publicar</a>
+  <a th:href="@{/chat}" th:classappend="${activa == 'chat'} ? 'is-active'"><i class="bi bi-chat-dots"></i>Mensajes</a>
+  <a th:href="@{/cuenta}" th:classappend="${activa == 'cuenta'} ? 'is-active'"><i class="bi bi-person"></i>Cuenta</a>
 </nav>
 
-<!-- Uso: <th:block th:replace="~{fragments/layout :: scripts}"></th:block> -->
+<footer th:fragment="footer" class="uv-footer container">
+  <img th:src="@{/img/logo.svg}" width="28" height="28" alt="" class="mb-2"><br>
+  UVenta · Economía circular universitaria<br>
+  Proyecto académico · Universidad Veracruzana
+</footer>
+
 <th:block th:fragment="scripts">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </th:block>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- <th:block th:replace="~{fragments/tarjeta :: tarjeta(${p})}"></th:block> -->
+<article th:fragment="tarjeta(p)" class="uv-card" th:classappend="${p.destacada} ? 'is-featured'">
+  <div class="uv-card__media" th:classappend="'tone-' + ${p.tono}">
+    <img th:if="${p.imagenUrl != null}" th:src="${p.imagenUrl}" alt="" loading="lazy">
+    <i th:unless="${p.imagenUrl != null}" class="bi uv-card__ph" th:classappend="${p.categoriaIcono}" aria-hidden="true"></i>
+    <span class="uv-badge uv-badge--feat" th:if="${p.destacada}"><i class="bi bi-star-fill"></i> Destacado</span>
+    <span class="uv-badge uv-badge--tipo" th:classappend="'is-' + ${p.tipo.clase}">
+      <i class="bi" th:classappend="${p.tipo.icono}"></i> <span th:text="${p.tipo.etiqueta}">Venta</span>
+    </span>
+  </div>
+  <div class="uv-card__body">
+    <div class="uv-card__cat"><i class="bi" th:classappend="${p.categoriaIcono}"></i><span th:text="${p.categoria}">Categoría</span></div>
+    <h3 class="uv-card__title"><a class="stretched-link" th:href="@{/publicacion/{id}(id=${p.id})}" th:text="${p.titulo}">Título</a></h3>
+    <p class="uv-card__meta" th:if="${p.meta != null}" th:text="${p.meta}">Materia</p>
+    <div class="uv-card__price" th:classappend="${p.tipo.clase == 'donacion'} ? 'is-donacion'" th:text="${p.precioTexto}">$0</div>
+    <div class="uv-card__foot">
+      <span class="uv-avatar uv-avatar--sm" th:text="${p.iniciales}">AB</span>
+      <span class="text-truncate" th:text="${p.vendedor}">Vendedor</span>
+      <span class="ms-auto text-nowrap"><i class="bi bi-clock"></i> <span th:text="${p.hace}">hace 1 h</span></span>
+    </div>
+  </div>
+</article>
+</body>
+</html>
