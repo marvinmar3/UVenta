@@ -60,11 +60,11 @@
 
           <div class="uv-drop">
             <input type="file" id="fotos" name="fotos" class="visually-hidden" multiple
-                   accept="image/jpeg,image/png" th:attr="data-max=${maxFotos}">
+                   accept="image/jpeg,image/png,image/heic,image/heif,.heic,.heif" th:attr="data-max=${maxFotos}">
             <label for="fotos" class="uv-drop__label">
               <i class="bi bi-cloud-arrow-up"></i>
               <strong>Agrega hasta <span th:text="${maxFotos}">4</span> fotos</strong>
-              <span>JPG o PNG · máximo 5 MB cada una</span>
+              <span>JPG, PNG o HEIC · máximo 5 MB cada una</span>
             </label>
           </div>
           <div class="uv-previews mt-3" id="previews" aria-live="polite"></div>
@@ -180,6 +180,7 @@
 
 <nav th:replace="~{fragments/layout :: tabbar('publicar')}"></nav>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+<script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 <script th:src="@{/js/publicar.js}"></script>
 </body>
 </html>

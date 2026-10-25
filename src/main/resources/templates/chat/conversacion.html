@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Mensajes')}"></head>
+<body class="chat-page">
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="container py-3">
+  <div class="uv-chat">
+
+    <aside class="uv-chat__lista d-none d-lg-flex">
+      <th:block th:replace="~{chat/fragmentos :: lista}"></th:block>
+    </aside>
+
+    <section class="uv-chat__panel" aria-label="Conversación">
+      <div class="uv-chat__head">
+        <a class="uv-iconbtn d-lg-none" th:href="@{/chat}" aria-label="Volver a mensajes"><i class="bi bi-arrow-left"></i></a>
+        <span class="uv-avatar" th:text="${v.otroIniciales}">AB</span>
+        <div class="min-w-0">
+          <strong class="d-block text-truncate" th:text="${v.otroNombre}">Nombre</strong>
+          <span class="small text-success fw-bold"><i class="bi bi-patch-check-fill"></i> Verificado UV</span>
+          <span class="small uv-muted" th:text="${v.soyVendedor ? '· Interesado en tu publicación' : '· Vendedor'}">· Vendedor</span>
+        </div>
+      </div>
+
+      <a class="uv-chat__prod" th:href="@{/publicacion/{id}(id=${v.publicacionId})}" th:if="${v.publicacionDisponible}">
+        <span class="uv-chat__thumb" th:classappend="'tone-' + ${v.tono}">
+          <img th:if="${v.publicacionImagen != null}" th:src="${v.publicacionImagen}" alt="">
+          <i th:unless="${v.publicacionImagen != null}" class="bi" th:classappend="${v.categoriaIcono}"></i>
+        </span>
+        <span class="min-w-0">
+          <span class="d-block fw-bold text-truncate" th:text="${v.publicacionTitulo}">Título</span>
+          <span class="small uv-muted" th:text="${v.publicacionPrecio}">$0</span>
+        </span>
+        <i class="bi bi-chevron-right ms-auto uv-muted"></i>
+      </a>
+      <div class="uv-chat__prod uv-chat__prod--off" th:unless="${v.publicacionDisponible}">
+        <i class="bi bi-info-circle"></i> Esta publicación ya no está disponible.
+      </div>
+
+      <div class="uv-chat__safe">
+        <i class="bi bi-shield-check"></i>
+        <span>Acuerden la entrega dentro de la facultad. No compartas contraseñas, códigos ni datos bancarios.</span>
+      </div>
+
+      <div id="mensajes" class="uv-chat__box" aria-live="polite"
+           th:attr="data-base=@{/chat/{id}(id=${v.id})}, data-ultimo=${v.ultimoId}, data-csrf=${_csrf.token}, data-csrf-header=${_csrf.headerName}">
+        <div th:if="${#lists.isEmpty(v.mensajes)}" class="uv-chat__inicio" id="inicioChat">
+          <i class="bi bi-chat-heart"></i>
+          <p class="mb-0">Saluda y pregunta lo que necesites.</p>
+        </div>
+        <th:block th:with="mensajes=${v.mensajes}, diaPrevio=''">
+          <th:block th:replace="~{chat/fragmentos :: burbujas}"></th:block>
+        </th:block>
+      </div>
+
+      <div class="uv-chat__sug" aria-label="Mensajes rápidos">
+        <button type="button" class="uv-sug" th:each="s : ${sugerencias}" th:attr="data-texto=${s}" th:text="${s}">¿Sigue disponible?</button>
+      </div>
+
+      <p class="small text-danger px-3 mb-1" id="errorChat" role="alert" th:text="${errorChat}" th:hidden="${errorChat == null}"></p>
+
+      <form id="formMensaje" class="uv-chat__form" th:action="@{/chat/{id}/mensajes(id=${v.id})}" method="post">
+        <label for="textoMensaje" class="visually-hidden">Mensaje</label>
+        <textarea id="textoMensaje" name="texto" rows="1" required placeholder="Escribe un mensaje…"
+                  th:maxlength="${maxCaracteres}"></textarea>
+        <button type="submit" class="btn btn-primary uv-send" aria-label="Enviar mensaje"><i class="bi bi-send-fill"></i></button>
+      </form>
+    </section>
+  </div>
+</main>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+<script th:src="@{/js/chat.js}"></script>
+</body>
+</html>

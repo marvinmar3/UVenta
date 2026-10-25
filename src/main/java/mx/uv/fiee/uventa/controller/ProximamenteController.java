@@ -13,14 +13,10 @@ public class ProximamenteController {
     private static final Map<String, String[]> SECCIONES = Map.of(
         "/favoritos", new String[]{"Favoritos", "bi-heart",
             "Guarda lo que te interesa para encontrarlo después."},
-        "/chat", new String[]{"Mensajes", "bi-chat-dots",
-            "Chatea con compradores y vendedores para acordar el precio y la entrega."},
-        "/mis-publicaciones", new String[]{"Mis publicaciones", "bi-box-seam",
-            "Edita, pausa o marca como vendido lo que publicaste."},
         "/cuenta", new String[]{"Mi cuenta", "bi-person-circle",
             "Aquí verás y editarás tu perfil."});
 
-    @GetMapping({"/favoritos", "/chat", "/cuenta"})
+    @GetMapping({"/favoritos", "/cuenta"})
     public String seccion(HttpServletRequest req, Model model) {
         String[] s = SECCIONES.get(req.getRequestURI());
         model.addAttribute("titulo", s[0]);

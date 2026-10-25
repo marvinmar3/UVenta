@@ -27,9 +27,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-@Service 
-@RequiredArgsConstructor 
+@Service
+@RequiredArgsConstructor
 public class PublicacionService {
+
     public static final int MAX_FOTOS = 4;
 
     private final PublicacionRepository publicaciones;
@@ -37,6 +38,7 @@ public class PublicacionService {
     private final UsuarioRepository usuarios;
     private final AlmacenImagenes almacen;
 
+    // ---------------------------------------------------------------- crear
 
     @Transactional
     public Long crear(String correo, PublicacionForm f, List<MultipartFile> fotos) {
@@ -64,6 +66,8 @@ public class PublicacionService {
             throw e;
         }
     }
+
+    // ------------------------------------------------------------- actualizar
 
     @Transactional
     public void actualizar(Long id, String correo, PublicacionForm f,
@@ -100,6 +104,8 @@ public class PublicacionService {
             throw e;
         }
     }
+
+    // ----------------------------------------------------------------- estado
 
     /** Devuelve el mensaje que se muestra al usuario. */
     @Transactional
@@ -219,5 +225,4 @@ public class PublicacionService {
     private static void exigir(boolean condicion) {
         if (!condicion) throw new ResponseStatusException(HttpStatus.CONFLICT);
     }
-
 }

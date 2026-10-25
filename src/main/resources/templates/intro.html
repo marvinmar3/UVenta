@@ -1,0 +1,308 @@
+ <!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>UVenta · Tu facultad, tu mercado</title>
+  <meta name="description" content="Compra, vende, intercambia y dona entre compañeros de la Universidad Veracruzana. Comunidad verificada con correo institucional y entregas dentro del campus.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/uventa.css(v=3)}">
+  <link rel="stylesheet" th:href="@{/css/intro.css(v=1)}">
+  <link rel="icon" type="image/svg+xml" th:href="@{/img/logo.svg}">
+</head>
+<body class="il-body">
+
+<!-- Íconos de la animación -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="cube" viewBox="0 0 48 48"><g stroke="#0F2D4E" stroke-width="2.6" stroke-linejoin="round"><path d="M24 4L42 14L24 24L6 14Z" fill="#17744F"/><path d="M6 14L24 24V44L6 34Z" fill="#FBD3AE"/><path d="M42 14L24 24V44L42 34Z" fill="#F7743B"/></g></symbol>
+  <symbol id="book" viewBox="0 0 24 24"><path d="M4 5h6a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h6z"/></symbol>
+  <symbol id="chip" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4"/></symbol>
+  <symbol id="cup" viewBox="0 0 24 24"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5zM16 10h2a2 2 0 0 1 0 4h-2M9 3v3M12 3v3"/></symbol>
+  <symbol id="bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></symbol>
+  <symbol id="check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></symbol>
+  <symbol id="pin" viewBox="0 0 24 24"><path d="M12 21s6-5.5 6-11a6 6 0 0 0-12 0c0 5.5 6 11 6 11z"/><circle cx="12" cy="10" r="2"/></symbol>
+  <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></symbol>
+  <symbol id="grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></symbol>
+</svg>
+
+<a class="visually-hidden-focusable il-skip" href="#como">Saltar la presentación</a>
+
+<!-- Encabezado: siempre visible, con acceso a iniciar sesión y registro -->
+<header class="il-head">
+  <div class="container il-head__row">
+    <a class="il-brand" th:href="@{/}" aria-label="UVenta, inicio">
+      <img th:src="@{/img/logo.svg}" width="34" height="34" alt=""><span>UVenta</span>
+    </a>
+    <nav class="il-nav" aria-label="Secciones">
+      <a href="#como">Cómo funciona</a>
+      <a href="#categorias">Categorías</a>
+      <a href="#seguridad">Seguridad</a>
+      <a href="#preguntas">Preguntas</a>
+    </nav>
+    <div class="il-actions">
+      <a class="btn btn-light" th:href="@{/login}"><i class="bi bi-box-arrow-in-right"></i> <span>Iniciar sesión</span></a>
+      <a class="btn btn-accent" th:href="@{/registro}"><i class="bi bi-person-plus"></i> <span>Registrarse</span></a>
+    </div>
+  </div>
+</header>
+
+<!-- Presentación animada (sincronizada con la voz en off) -->
+<section id="stage" th:attr="data-audio=@{/intro/voz.mp3}" role="img"
+         aria-label="Presentación animada de UVenta: la economía circular de los estudiantes de la Universidad Veracruzana">
+<p class="visually-hidden">
+  UVenta es el mercado de los estudiantes de la Universidad Veracruzana. Cada usuario se verifica con su correo institucional,
+  puede comprar material académico más barato, dar segunda vida a lo que ya no usa, impulsar su emprendimiento y entregar dentro del campus.
+</p>
+
+<!-- 1 · EL PROBLEMA -->
+<section class="sc dark" data-s="0" data-e="10.9"><div class="st">
+  <div class="cp w up" data-s="0.3" data-e="6.9"><p class="k">Hoy</p><h2>Tus publicaciones <em>se pierden</em> entre cientos de memes.</h2></div>
+  <div class="cp w up" data-s="7.1" data-e="10.6"><p class="k">Y además</p><h2>¿Ese perfil es <em>real</em>?</h2></div>
+  <div class="chat" data-s="0" data-e="6.95">
+    <div class="r" data-s="0.4"><div><div class="b l">Vendo apuntes de Cálculo II<small>Grupo Ingeniería · $120</small></div></div></div>
+    <div class="r" data-s="1.3"><div><div class="b m" style="--h:210"></div></div></div>
+    <div class="r" data-s="2.0"><div><div class="b m" style="--h:25"></div></div></div>
+    <div class="r" data-s="2.6"><div><div class="b l">Libro de Física, como nuevo<small>Grupo Ingeniería · $200</small></div></div></div>
+    <div class="r" data-s="3.2"><div><div class="b m" style="--h:340"></div></div></div>
+    <div class="r" data-s="3.7"><div><div class="b m" style="--h:150"></div></div></div>
+    <div class="r" data-s="4.2"><div><div class="b m" style="--h:25"></div></div></div>
+    <div class="r" data-s="4.6"><div><div class="b m" style="--h:210"></div></div></div>
+    <div class="r" data-s="5.0"><div><div class="b m" style="--h:300"></div></div></div>
+    <div class="r" data-s="5.4"><div><div class="b m" style="--h:150"></div></div></div>
+    <div class="r" data-s="5.8"><div><div class="b m" style="--h:25"></div></div></div>
+    <div class="r" data-s="6.2"><div><div class="b m" style="--h:340"></div></div></div>
+  </div>
+  <div class="pf pf1 up" data-s="7.1" data-e="10.6"><div class="av"></div><div class="bar1"></div><p>Cuenta creada hace 2 días</p><span class="tag">Sin verificar</span></div>
+  <div class="pf pf2 up" data-s="7.8" data-e="10.6"><div class="av"></div><div class="bar1" style="width:70%"></div><p>0 reseñas · sin foto real</p><span class="tag">Sin verificar</span></div>
+</div></section>
+
+<div class="wipe" data-s="10.05" data-e="11.4"></div>
+
+<!-- 2 · LA SOLUCIÓN -->
+<section class="sc" data-s="10.6" data-e="23.8"><div class="st">
+  <div class="lg w" data-s="10.6" data-e="11.4" style="z-index:3"><svg><use href="#cube"/></svg>UVenta</div>
+  <div class="lg n" data-s="11.4" data-e="12.1"><svg><use href="#cube"/></svg>UVenta</div>
+  <div class="brand" data-s="12.1" data-e="42.6"><svg><use href="#cube"/></svg>UVenta</div>
+
+  <div class="cp up" data-s="12.1" data-e="17.2"><p class="k">Economía circular</p><h2>Para <em>estudiantes</em> de la Universidad Veracruzana.</h2></div>
+  <div class="shot" data-s="12.1" data-e="17.3"><img th:src="@{/intro/home.jpg}" alt=""></div>
+
+  <div class="cp up" data-s="17.4" data-e="19.0"><p class="k">Confianza</p><h2>Olvídate de los <em>riesgos</em>.</h2></div>
+  <div class="shot" data-s="17.4" data-e="23.6"><img th:src="@{/intro/login.jpg}" alt=""><div class="hl" data-s="18.0"></div></div>
+
+  <div class="cp up" data-s="19.2" data-e="23.6"><p class="k">Verificación</p><h2>Cada usuario, con su <em>correo institucional</em>.</h2></div>
+  <div class="seal" data-s="19.4" data-e="23.6"><svg class="ic"><use href="#shield"/></svg></div>
+  <div class="crow r72" data-s="19.4" data-e="23.6">
+    <span class="chip up" data-s="19.6" data-e="23.6"><svg class="ic"><use href="#check"/></svg>@uv.mx</span>
+    <span class="chip up" data-s="20.2" data-e="23.6"><svg class="ic"><use href="#check"/></svg>estudiantes.uv.mx</span>
+    <span class="chip up" data-s="20.8" data-e="23.6"><svg class="ic"><use href="#check"/></svg>egresados.uv.mx</span>
+  </div>
+</div></section>
+
+<!-- 3 · BENEFICIOS -->
+<section class="sc" data-s="23.8" data-e="34.6"><div class="st">
+  <div class="brand" style="opacity:1;visibility:visible"><svg><use href="#cube"/></svg>UVenta</div>
+  <div class="cp up" data-s="23.9" data-e="26.3"><p class="k">Compra</p><h2>Material académico <em>más barato</em>.</h2></div>
+  <div class="cp up" data-s="26.4" data-e="28.7"><p class="k">Reutiliza</p><h2>Dale una <em>segunda vida</em> a lo que ya no usas.</h2></div>
+  <div class="shot" data-s="23.9" data-e="28.7"><img th:src="@{/intro/home.jpg}" alt=""></div>
+  <div class="crow" data-s="24.2" data-e="28.7">
+    <div class="ibox up" data-s="24.3" data-e="28.7"><svg class="ic"><use href="#book"/></svg></div>
+    <div class="ibox up" data-s="24.6" data-e="28.7"><svg class="ic"><use href="#chip"/></svg></div>
+    <div class="ibox up" data-s="24.9" data-e="28.7"><svg class="ic"><use href="#cup"/></svg></div>
+    <div class="ibox up" data-s="25.2" data-e="28.7"><svg class="ic"><use href="#bag"/></svg></div>
+  </div>
+
+  <div class="cp up" data-s="28.9" data-e="32.5"><p class="k">Emprende</p><h2>Impulsa tu <em>emprendimiento</em> estudiantil.</h2></div>
+  <div class="cp up" data-s="32.65" data-e="34.5"><p class="k">Resultado</p><h2>Con <em>visibilidad</em> real.</h2></div>
+  <div class="crow" data-s="29.2" data-e="34.5">
+    <span class="chip up" data-s="29.3" data-e="34.5"><svg class="ic"><use href="#cup"/></svg>Alimentos</span>
+    <span class="chip up" data-s="29.9" data-e="34.5"><svg class="ic"><use href="#bag"/></svg>Accesorios</span>
+  </div>
+  <div class="viz up" data-s="28.9" data-e="34.5"><b>Visibilidad</b>
+    <div class="bars">
+      <div class="bar" style="--v:22%" data-s="29.2"></div><div class="bar" style="--v:34%" data-s="29.5"></div>
+      <div class="bar" style="--v:48%" data-s="29.8"></div><div class="bar" style="--v:66%" data-s="30.1"></div>
+      <div class="bar last" style="--v:92%" data-s="30.6"></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 4 · ORGANIZACIÓN -->
+<section class="sc" data-s="34.6" data-e="38.8"><div class="st">
+  <div class="brand" style="opacity:1;visibility:visible"><svg><use href="#cube"/></svg>UVenta</div>
+  <div class="cp cp4 up" data-s="34.7" data-e="38.6"><p class="k">Orden</p><h2 class="q4">Todo organizado por <em>categorías, materias y semestres</em>.</h2></div>
+  <div class="shot s-back" data-s="34.9" data-e="38.7"><img th:src="@{/intro/pub2.jpg}" alt=""></div>
+  <div class="shot s-front" data-s="34.7" data-e="38.7"><img th:src="@{/intro/filtros.jpg}" alt=""></div>
+  <div class="crow r72" data-s="35" data-e="38.6">
+    <span class="chip up" data-s="35.1" data-e="38.6"><svg class="ic"><use href="#grid"/></svg>Categoría</span>
+    <span class="chip up" data-s="36.0" data-e="38.6"><svg class="ic"><use href="#book"/></svg>Materia</span>
+    <span class="chip up" data-s="36.9" data-e="38.6"><svg class="ic"><use href="#cal"/></svg>Semestre</span>
+  </div>
+</div></section>
+
+<!-- 5 · CAMPUS -->
+<section class="sc" data-s="38.9" data-e="42.7"><div class="st">
+  <div class="brand" style="opacity:1;visibility:visible"><svg><use href="#cube"/></svg>UVenta</div>
+  <div class="cp cp5 up" data-s="39.0" data-e="42.5"><p class="k">Entregas</p><h2>Seguras, <em>dentro del campus</em>.</h2></div>
+  <div class="photo" data-s="39.0" data-e="42.6"><img th:src="@{/intro/campus.svg}" alt="">
+    <div class="pins">
+      <span class="pin up" data-s="39.9" data-e="42.6"><svg class="ic"><use href="#pin"/></svg>Biblioteca</span>
+      <span class="pin up" data-s="40.5" data-e="42.6"><svg class="ic"><use href="#pin"/></svg>Cafetería</span>
+      <span class="pin up" data-s="41.1" data-e="42.6"><svg class="ic"><use href="#pin"/></svg>Explanada</span>
+    </div>
+  </div>
+</div></section>
+
+<!-- 6 · LLAMADO A LA ACCIÓN -->
+<section class="sc dark" data-s="42.5" data-e="999"><div class="st">
+  <div class="ct up" data-s="42.8" data-e="45.4"><h2>Únete hoy a la <em>comunidad</em>.</h2></div>
+  <div class="ct up" data-s="45.5" data-e="48.3"><h2>Tu facultad mueve la <em>economía local</em>.</h2></div>
+  <div class="ct up" data-s="48.4" data-e="50.4"><h2>Entra ahora mismo.</h2><a class="cta" th:href="@{/registro}">Crea tu cuenta<svg class="ic"><use href="#arrow"/></svg></a></div>
+  <div class="ct lgw up" data-s="50.5" data-e="999"><div class="lg"><svg><use href="#cube"/></svg>UVenta</div><p class="tl">Tu facultad, tu mercado.</p><p class="sm">Economía circular universitaria · Universidad Veracruzana</p></div>
+</div></section>
+
+<div class="ctl">
+  <button type="button" id="snd" aria-pressed="false"><i class="bi bi-volume-mute-fill"></i> <span>Activar sonido</span></button>
+  <button type="button" id="skip"><i class="bi bi-skip-end-fill"></i> <span>Omitir</span></button>
+  <button type="button" id="replay" hidden><i class="bi bi-arrow-counterclockwise"></i> <span>Ver de nuevo</span></button>
+</div>
+<a class="hint" href="#como">Conoce más <i class="bi bi-chevron-down"></i></a>
+<div class="prog" id="prog"></div>
+</section>
+
+<main>
+
+<!-- CÓMO FUNCIONA -->
+<section class="il-sec" id="como" aria-labelledby="t-como">
+  <div class="container">
+    <p class="il-kicker">Cómo funciona</p>
+    <h2 class="il-title" id="t-como">Tres pasos y ya estás dentro</h2>
+    <div class="row g-3 g-lg-4 mt-1">
+      <div class="col-md-4"><article class="il-card h-100">
+        <span class="il-step">1</span>
+        <span class="il-ico il-ico--g"><i class="bi bi-patch-check"></i></span>
+        <h3>Verifica tu correo UV</h3>
+        <p>Regístrate con tu correo <b>@estudiantes.uv.mx</b>, <b>@uv.mx</b> o <b>@egresados.uv.mx</b> y confírmalo con un código. Tu matrícula se toma de tu correo.</p>
+      </article></div>
+      <div class="col-md-4"><article class="il-card h-100">
+        <span class="il-step">2</span>
+        <span class="il-ico il-ico--o"><i class="bi bi-camera"></i></span>
+        <h3>Publica o explora</h3>
+        <p>Sube hasta 4 fotos e indica materia y semestre, o busca por categoría, carrera, semestre y precio hasta encontrar lo que necesitas.</p>
+      </article></div>
+      <div class="col-md-4"><article class="il-card h-100">
+        <span class="il-step">3</span>
+        <span class="il-ico il-ico--b"><i class="bi bi-chat-dots"></i></span>
+        <h3>Habla y acuerda</h3>
+        <p>Conversa dentro de UVenta, pacten el precio y elijan un punto de entrega en la facultad. Sin compartir tu número.</p>
+      </article></div>
+    </div>
+    <div class="il-cta-row">
+      <a class="btn btn-primary btn-lg" th:href="@{/registro}"><i class="bi bi-person-plus"></i> Crear mi cuenta</a>
+      <a class="btn btn-light btn-lg" th:href="@{/login}"><i class="bi bi-box-arrow-in-right"></i> Ya tengo cuenta</a>
+    </div>
+  </div>
+</section>
+
+<!-- FORMAS DE PARTICIPAR -->
+<section class="il-sec il-sec--soft" aria-labelledby="t-formas">
+  <div class="container">
+    <p class="il-kicker">Economía circular</p>
+    <h2 class="il-title" id="t-formas">Lo que ya no usas, a alguien le sirve</h2>
+    <div class="row g-3 mt-1">
+      <div class="col-6 col-lg-3"><div class="il-mini"><i class="bi bi-tag"></i><h3>Vende</h3><p>Ponle precio a tus libros, apuntes y equipo.</p></div></div>
+      <div class="col-6 col-lg-3"><div class="il-mini"><i class="bi bi-arrow-left-right"></i><h3>Intercambia</h3><p>Cambia lo tuyo por algo que sí necesites.</p></div></div>
+      <div class="col-6 col-lg-3"><div class="il-mini"><i class="bi bi-gift"></i><h3>Dona</h3><p>Regala lo que ya no usas a un compañero.</p></div></div>
+      <div class="col-6 col-lg-3"><div class="il-mini"><i class="bi bi-shop"></i><h3>Emprende</h3><p>Da a conocer tu negocio estudiantil en tu facultad.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORÍAS -->
+<section class="il-sec" id="categorias" aria-labelledby="t-cat">
+  <div class="container">
+    <p class="il-kicker">Categorías</p>
+    <h2 class="il-title" id="t-cat">Encuentra lo que necesitas en tu día a día</h2>
+    <div class="row g-3 mt-1">
+      <div class="col-6 col-md-4"><div class="il-cat"><span class="il-cat__i tone-0"><i class="bi bi-book"></i></span><div><h3>Libros y material académico</h3><p>Libros, apuntes, calculadoras y material escolar.</p></div></div></div>
+      <div class="col-6 col-md-4"><div class="il-cat"><span class="il-cat__i tone-2"><i class="bi bi-cpu"></i></span><div><h3>Electrónica y tecnología</h3><p>Componentes, computadoras y accesorios.</p></div></div></div>
+      <div class="col-6 col-md-4"><div class="il-cat"><span class="il-cat__i tone-5"><i class="bi bi-handbag"></i></span><div><h3>Ropa y accesorios</h3><p>Prendas, batas, mochilas y más.</p></div></div></div>
+      <div class="col-6 col-md-4"><div class="il-cat"><span class="il-cat__i tone-1"><i class="bi bi-cup-hot"></i></span><div><h3>Alimentos</h3><p>Comida, postres y bebidas de emprendedores.</p></div></div></div>
+      <div class="col-6 col-md-4"><div class="il-cat"><span class="il-cat__i tone-3"><i class="bi bi-mortarboard"></i></span><div><h3>Servicios estudiantiles</h3><p>Asesorías, diseño y ayuda entre compañeros.</p></div></div></div>
+      <div class="col-6 col-md-4"><div class="il-cat"><span class="il-cat__i tone-4"><i class="bi bi-house-door"></i></span><div><h3>Hogar y artículos generales</h3><p>Todo lo demás que te puede servir.</p></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SEGURIDAD -->
+<section class="il-sec il-dark" id="seguridad" aria-labelledby="t-seg">
+  <div class="container">
+    <p class="il-kicker">Seguridad</p>
+    <h2 class="il-title" id="t-seg">Una comunidad en la que sí puedes confiar</h2>
+    <div class="row g-3 g-lg-4 mt-1">
+      <div class="col-md-6"><div class="il-sec-item"><span class="il-ico il-ico--w"><i class="bi bi-patch-check-fill"></i></span><div><h3>Solo comunidad UV</h3><p>Nadie entra sin confirmar su correo institucional. Cada perfil pertenece a una persona de la universidad.</p></div></div></div>
+      <div class="col-md-6"><div class="il-sec-item"><span class="il-ico il-ico--w"><i class="bi bi-geo-alt-fill"></i></span><div><h3>Entregas dentro del campus</h3><p>Te sugerimos puntos concurridos: biblioteca, cafetería, explanada, entrada de la facultad y pasillos de salones.</p></div></div></div>
+      <div class="col-md-6"><div class="il-sec-item"><span class="il-ico il-ico--w"><i class="bi bi-chat-heart-fill"></i></span><div><h3>Chat interno</h3><p>Conversa sin dar tu teléfono. Solo quien participa en la conversación puede verla.</p></div></div></div>
+      <div class="col-md-6"><div class="il-sec-item"><span class="il-ico il-ico--w"><i class="bi bi-flag-fill"></i></span><div><h3>Reporta lo que no te guste</h3><p>Si algo parece sospechoso, repórtalo desde la conversación y lo revisamos.</p></div></div></div>
+    </div>
+    <p class="il-tip"><i class="bi bi-info-circle"></i> Nunca compartas contraseñas, códigos de verificación ni datos bancarios.</p>
+  </div>
+</section>
+
+<!-- PREGUNTAS -->
+<section class="il-sec" id="preguntas" aria-labelledby="t-faq">
+  <div class="container il-faqwrap">
+    <p class="il-kicker">Preguntas frecuentes</p>
+    <h2 class="il-title" id="t-faq">Lo que más nos preguntan</h2>
+    <div class="accordion il-acc mt-3" id="faq">
+      <div class="accordion-item">
+        <h3 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#f1" aria-expanded="true" aria-controls="f1">¿Quién puede usar UVenta?</button></h3>
+        <div id="f1" class="accordion-collapse collapse show" data-bs-parent="#faq"><div class="accordion-body">Estudiantes, personal y egresados de la Universidad Veracruzana con correo <b>@estudiantes.uv.mx</b>, <b>@uv.mx</b> o <b>@egresados.uv.mx</b>.</div></div>
+      </div>
+      <div class="accordion-item">
+        <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f2" aria-expanded="false" aria-controls="f2">¿Cómo se paga lo que compro?</button></h3>
+        <div id="f2" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">El pago y la entrega los acuerdan entre ustedes dentro de la facultad. Revisa el artículo en persona antes de pagar.</div></div>
+      </div>
+      <div class="accordion-item">
+        <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f3" aria-expanded="false" aria-controls="f3">¿Qué puedo publicar?</button></h3>
+        <div id="f3" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">Libros, apuntes, electrónica, ropa, alimentos, servicios estudiantiles y artículos del hogar. Puedes venderlos, intercambiarlos o donarlos.</div></div>
+      </div>
+      <div class="accordion-item">
+        <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f4" aria-expanded="false" aria-controls="f4">¿Qué hago si algo me parece sospechoso?</button></h3>
+        <div id="f4" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">Abre la conversación, toca el menú de tres puntos y elige <b>Reportar</b>. No compartas datos personales ni bancarios.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CIERRE -->
+<section class="il-final">
+  <div class="container text-center">
+    <img th:src="@{/img/logo.svg}" width="56" height="56" alt="">
+    <h2>Tu facultad, tu mercado.</h2>
+    <p>Únete a la comunidad y empieza a darle una segunda vida a tus cosas.</p>
+    <div class="il-cta-row justify-content-center">
+      <a class="btn btn-accent btn-lg" th:href="@{/registro}"><i class="bi bi-person-plus"></i> Registrarme</a>
+      <a class="btn btn-light btn-lg" th:href="@{/login}"><i class="bi bi-box-arrow-in-right"></i> Iniciar sesión</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="il-foot">
+  <div class="container">
+    <span>UVenta · Economía circular universitaria</span>
+    <span>Universidad Veracruzana</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/intro.js(v=1)}"></script>
+</body>
+</html>

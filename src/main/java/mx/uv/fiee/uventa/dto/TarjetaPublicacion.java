@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Getter;
+import mx.uv.fiee.uventa.model.EstadoPublicacion;
 import mx.uv.fiee.uventa.model.Publicacion;
 import mx.uv.fiee.uventa.model.TipoOferta;
 import mx.uv.fiee.uventa.model.Usuario;
 import mx.uv.fiee.uventa.util.Formato;
-import mx.uv.fiee.uventa.model.EstadoPublicacion;
 
 /** Datos ya listos para pintar una tarjeta (evita cargar entidades en la vista). */
 @Getter @Builder

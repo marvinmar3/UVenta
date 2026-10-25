@@ -1,31 +1,37 @@
 package mx.uv.fiee.uventa.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import java.security.Principal;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
 import mx.uv.fiee.uventa.dto.FiltroCatalogo;
 import mx.uv.fiee.uventa.model.TipoOferta;
 import mx.uv.fiee.uventa.service.CatalogoService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.util.UriComponentsBuilder;
-import java.util.List;
-import lombok.RequiredArgsConstructor;
-import java.security.Principal;
 
-@Controller 
-@RequiredArgsConstructor 
+@Controller
+@RequiredArgsConstructor
 public class CatalogoController {
 
     private final CatalogoService catalogo;
 
-    /* pagina principal: busqueda, catalogo, destacados y listado con filtros */
-    
-    @GetMapping ("/")
-    public String home(@ModelAttribute("f") FiltroCatalogo f, BindingResult ignorarErrores, Model model){
+    /**
+     * Página principal. Sin sesión muestra la intro de bienvenida (con acceso a iniciar sesión y registro);
+     * con sesión, el catálogo: búsqueda, categorías, destacados y listado con filtros.
+     */
+    @GetMapping("/")
+    public String home(@ModelAttribute("f") FiltroCatalogo f, BindingResult ignorarErrores,
+                       Principal principal, Model model) {
+        if (principal == null) {
+            return "intro";
+        }
         boolean filtrado = f.hayFiltros();
-        model.addAttribute("page",catalogo.buscar(f));
+        model.addAttribute("page", catalogo.buscar(f));
         model.addAttribute("categorias", catalogo.categorias());
         model.addAttribute("carreras", catalogo.carreras());
         model.addAttribute("tipos", TipoOferta.values());
@@ -35,13 +41,14 @@ public class CatalogoController {
         return "home";
     }
 
-    @GetMapping ("/catalogo")
-     public String rutaAnterior(){
-        return "redirect:/"; 
+    /** Ruta anterior (login la usaba): ahora el catálogo vive en la página principal. */
+    @GetMapping("/catalogo")
+    public String rutaAnterior() {
+        return "redirect:/";
     }
 
     @GetMapping("/publicacion/{id}")
-    public String detalle(@PathVariable Long id,Principal principal, Model model) {
+    public String detalle(@PathVariable Long id, Principal principal, Model model) {
         model.addAttribute("p", catalogo.detalle(id, principal.getName()));
         return "publicacion/detalle";
     }
@@ -59,5 +66,4 @@ public class CatalogoController {
         String q = b.build().encode().getQuery();
         return q == null ? "" : q + "&";
     }
-    
 }

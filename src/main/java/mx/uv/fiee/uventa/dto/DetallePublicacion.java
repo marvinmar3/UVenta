@@ -6,12 +6,12 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import mx.uv.fiee.uventa.model.Condicion;
+import mx.uv.fiee.uventa.model.EstadoPublicacion;
 import mx.uv.fiee.uventa.model.ImagenPublicacion;
 import mx.uv.fiee.uventa.model.Publicacion;
 import mx.uv.fiee.uventa.model.TipoOferta;
 import mx.uv.fiee.uventa.model.Usuario;
 import mx.uv.fiee.uventa.util.Formato;
-import mx.uv.fiee.uventa.model.EstadoPublicacion;
 
 @Getter @Builder
 public class DetallePublicacion {
@@ -20,7 +20,7 @@ public class DetallePublicacion {
     private final String descripcion;
     private final TipoOferta tipo;
     private final BigDecimal precio;
-    private final Condicion condicion; 
+    private final Condicion condicion;
     private final String categoria;
     private final String categoriaIcono;
     private final int tono;
@@ -64,5 +64,4 @@ public class DetallePublicacion {
                 .estado(p.getEstado())
                 .build();
     }
-    
 }

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Burbujas de mensajes. Variables: mensajes (lista) y diaPrevio (día del último mensaje ya mostrado). -->
+<th:block th:fragment="burbujas">
+  <th:block th:each="m, st : ${mensajes}">
+    <div class="uv-dia" th:attr="data-dia=${m.dia}"
+         th:if="${st.first ? m.dia != diaPrevio : m.dia != mensajes[st.index - 1].dia}" th:text="${m.dia}">Hoy</div>
+    <div class="uv-msg" th:classappend="${m.propio} ? 'uv-msg--propio' : 'uv-msg--otro'"
+         th:attr="data-id=${m.id}, data-dia=${m.dia}, data-propio=${m.propio}">
+      <div class="uv-msg__burbuja">
+        <span class="uv-msg__texto" th:text="${m.texto}">Hola</span>
+        <span class="uv-msg__meta">
+          <span th:text="${m.hora}">14:05</span>
+          <i class="bi uv-msg__ticks" th:if="${m.propio}" th:classappend="${m.leido} ? 'bi-check2-all is-leido' : 'bi-check2'"></i>
+        </span>
+      </div>
+    </div>
+  </th:block>
+</th:block>
+
+<!-- Lista de conversaciones. Variables: bandeja, activa (id abierto o null), rolSel. -->
+<th:block th:fragment="lista">
+  <div class="uv-lista__head">
+    <h1 class="h5 fw-bold m-0">Mensajes</h1>
+  </div>
+  <nav class="uv-tabs uv-tabs--sm" aria-label="Filtrar conversaciones">
+    <a th:href="@{/chat}" th:classappend="${rolSel == 'todas'} ? 'is-active'">Todas</a>
+    <a th:href="@{/chat(rol='compras')}" th:classappend="${rolSel == 'compras'} ? 'is-active'">Compras</a>
+    <a th:href="@{/chat(rol='ventas')}" th:classappend="${rolSel == 'ventas'} ? 'is-active'">Ventas</a>
+  </nav>
+  <div class="uv-lista__items">
+    <a class="uv-conv" th:each="c : ${bandeja}" th:href="@{/chat/{id}(id=${c.id})}"
+       th:classappend="${activa == c.id} ? 'is-active'">
+      <span class="uv-avatar" th:text="${c.otroIniciales}">AB</span>
+      <span class="uv-conv__txt">
+        <span class="uv-conv__fila">
+          <strong class="text-truncate" th:text="${c.otroNombre}">Nombre</strong>
+          <small class="ms-auto text-nowrap uv-muted" th:text="${c.hace}">hace 1 h</small>
+        </span>
+        <span class="uv-conv__prod text-truncate">
+          <i class="bi" th:classappend="${c.categoriaIcono}"></i> <span th:text="${c.titulo}">Publicación</span>
+        </span>
+        <span class="uv-conv__ult text-truncate" th:classappend="${c.sinLeer > 0} ? 'is-unread'" th:text="${c.ultimoTexto}">Último mensaje</span>
+      </span>
+      <span class="uv-count-badge" th:if="${c.sinLeer > 0}" th:text="${c.sinLeer}">1</span>
+    </a>
+    <div class="uv-empty m-3" th:if="${#lists.isEmpty(bandeja)}">
+      <i class="bi bi-chat-dots"></i>
+      <h2 class="h6 mt-2">Aún no tienes conversaciones</h2>
+      <p class="uv-muted small mb-3">Entra a una publicación y toca “Contactar al vendedor”.</p>
+      <a class="btn btn-primary btn-sm" th:href="@{/}"><i class="bi bi-compass"></i> Explorar</a>
+    </div>
+  </div>
+</th:block>
+
+</body>
+</html>

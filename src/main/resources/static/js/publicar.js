@@ -7,10 +7,41 @@
     var MAX= parseInt(input.dataset.max || '4', '10');
     var MAX_BYTES = 5*1024*1024; // 5 MB
     var TIPOS = ['image/jpeg', 'image/png'];
-    var preview = document.getElementById('previews');
-    var msj = document.getElementById('msgFotos');
+    var previews = document.getElementById('previews');
+    var msg = document.getElementById('msgFotos');
     var existentes = Array.prototype.slice.call(document.querySelectorAll('.uv-thumb__chk'));
     var archivos =[];
+    var convirtiendo = false;
+
+    function esHeic(archivo) {
+    return /image\/hei[cf]/i.test(archivo.type)
+        || /\.(heic|heif)$/i.test(archivo.name);
+}
+
+    async function convertirHeic(archivo) {
+      if (!esHeic(archivo)) {
+          return archivo;
+      }
+
+      if (typeof heic2any !== 'function') {
+          throw new Error('No se pudo cargar el conversor HEIC.');
+      }
+
+      var resultado = await heic2any({
+          blob: archivo,
+          toType: 'image/jpeg',
+          quality: 0.85
+      });
+
+      var blob = Array.isArray(resultado) ? resultado[0] : resultado;
+      var nombre = archivo.name.replace(/\.(heic|heif)$/i, '.jpg');
+
+      return new File([blob], nombre, {
+          type: 'image/jpeg',
+          lastModified: Date.now()
+      });
+    }
+
 
     function aviso(texto){
         msg.textContent = texto || '';
@@ -55,18 +86,61 @@
         });
     }
 
-    input.addEventListener('change', function () {
-    var cupo = capacidad();
-    var rechazadas = [];
-    Array.prototype.slice.call(input.files).forEach(function (f) {
-      if (TIPOS.indexOf(f.type) === -1) { rechazadas.push(f.name + ': solo JPG o PNG'); return; }
-      if (f.size > MAX_BYTES) { rechazadas.push(f.name + ': pesa más de 5 MB'); return; }
-      if (archivos.length >= cupo) { rechazadas.push('Máximo ' + MAX + ' fotos en total'); return; }
-      archivos.push(f);
-    });
-    sincronizar();
-    dibujar();
-    aviso(rechazadas.length ? 'No se agregó: ' + Array.from(new Set(rechazadas)).join('; ') + '.' : '');
+    input.addEventListener('change', async function () {
+      if (convirtiendo) {
+          return;
+      }
+
+      convirtiendo = true;
+      input.disabled = true;
+
+      var cupo = capacidad();
+      var rechazadas = [];
+
+      try {
+          var seleccionadas = Array.prototype.slice.call(input.files);
+
+          for (var i = 0; i < seleccionadas.length; i++) {
+              if (archivos.length >= cupo) {
+                  rechazadas.push('Máximo ' + MAX + ' fotos en total');
+                  break;
+              }
+
+              var original = seleccionadas[i];
+              var archivo;
+
+              try {
+                  archivo = await convertirHeic(original);
+              } catch (error) {
+                  rechazadas.push(original.name + ': no se pudo convertir');
+                  continue;
+              }
+
+              if (TIPOS.indexOf(archivo.type) === -1) {
+                  rechazadas.push(original.name + ': solo JPG, PNG o HEIC');
+                  continue;
+              }
+
+              if (archivo.size > MAX_BYTES) {
+                  rechazadas.push(original.name + ': supera los 5 MB después de convertir');
+                  continue;
+              }
+
+              archivos.push(archivo);
+          }
+
+          sincronizar();
+          dibujar();
+
+          aviso(
+              rechazadas.length
+                  ? 'No se agregó: ' + Array.from(new Set(rechazadas)).join('; ') + '.'
+                  : ''
+          );
+      } finally {
+          convirtiendo = false;
+          input.disabled = false;
+      }
   });
 
   // Si en la edición se marcan fotos para quitar, hay más espacio; si se desmarcan, menos.
@@ -109,9 +183,16 @@
   // Evita enviar dos veces el formulario
   var form = document.getElementById('formPublicar');
   var boton = document.getElementById('btnPublicar');
-  form.addEventListener('submit', function () {
+  form.addEventListener('submit', function (evento) {
+    if (convirtiendo) {
+        evento.preventDefault();
+        aviso('Espera a que terminen de convertir las imágenes.');
+        return;
+    }
+
     boton.disabled = true;
-    boton.innerHTML = '<span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Guardando…';
+    boton.innerHTML =
+        '<span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Guardando…';
   });
 
     

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -17,7 +18,27 @@ public final class Formato {
     private static final DateTimeFormatter FECHA =
             DateTimeFormatter.ofPattern("d 'de' MMM", Locale.forLanguageTag("es-MX"));
 
+    /** Veracruz usa la hora del centro de México todo el año. */
+    private static final ZoneId ZONA = ZoneId.of("America/Mexico_City");
+    private static final DateTimeFormatter HORA = DateTimeFormatter.ofPattern("HH:mm");
+    private static final DateTimeFormatter FECHA_CON_ANIO =
+            DateTimeFormatter.ofPattern("d 'de' MMM yyyy", Locale.forLanguageTag("es-MX"));
+
     private Formato() {}
+
+    /** "14:05" */
+    public static String hora(Instant t) {
+        return t.atZone(ZONA).format(HORA);
+    }
+
+    /** "Hoy", "Ayer" o la fecha corta; sirve para separar los mensajes por día. */
+    public static String dia(Instant t) {
+        LocalDate d = t.atZone(ZONA).toLocalDate();
+        LocalDate hoy = LocalDate.now(ZONA);
+        if (d.equals(hoy)) return "Hoy";
+        if (d.equals(hoy.minusDays(1))) return "Ayer";
+        return d.getYear() == hoy.getYear() ? d.format(FECHA) : d.format(FECHA_CON_ANIO);
+    }
 
     public static String dinero(BigDecimal v) {
         if (v == null) return "$0";
